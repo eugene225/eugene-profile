@@ -116,6 +116,212 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
+        /* Sports Schedule Grid */
+        .sports-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .schedule-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .schedule-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .schedule-header h2 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .schedule-header.volleyball h2 {
+            background: linear-gradient(135deg, #dc0000 0%, #1a1a1a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .schedule-header.baseball h2 {
+            background: linear-gradient(135deg, #8b1f41 0%, #1a1a1a 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .schedule-header .team-logo {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        .schedule-header .season {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .schedule-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 5px;
+            flex: 1;
+        }
+
+        .schedule-container::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .schedule-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .schedule-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #dc0000 0%, #1a1a1a 100%);
+            border-radius: 10px;
+        }
+
+        .schedule-container::-webkit-scrollbar-thumb:hover {
+            background: #dc0000;
+        }
+
+        .match-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #dc0000;
+        }
+
+        .match-card.home {
+            background: linear-gradient(135deg, #dc0000 0%, #ff4444 100%);
+            color: white;
+            border-left: 4px solid #1a1a1a;
+        }
+
+        .match-card.away {
+            background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+            color: white;
+            border-left: 4px solid #dc0000;
+        }
+
+        .match-card:hover {
+            transform: translateX(3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .no-schedule {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-schedule-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .no-schedule-text {
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .match-card:not(.home):not(.away) .match-header {
+            border-bottom: 1px solid #eee;
+        }
+
+        .match-date {
+            font-size: 0.95em;
+            font-weight: bold;
+        }
+
+        .match-time {
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
+
+        .match-round {
+            background: rgba(255,255,255,0.2);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+
+        .match-card:not(.home):not(.away) .match-round {
+            background: rgba(220,0,0,0.1);
+            color: #dc0000;
+        }
+
+        .match-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .match-opponent {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .match-location {
+            font-size: 0.8em;
+            opacity: 0.85;
+            margin-top: 3px;
+        }
+
+        .match-badge {
+            background: rgba(255,255,255,0.9);
+            color: #dc0000;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+
+        .match-card.home .match-badge {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .match-card.away .match-badge {
+            background: #dc0000;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #dc0000;
+            font-size: 1.1em;
+        }
+
         @media (max-width: 768px) {
             .profile-header h1 {
                 font-size: 2em;
@@ -131,6 +337,42 @@
 
             .section-title {
                 font-size: 1.5em;
+            }
+
+            .sports-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-section {
+                padding: 20px;
+            }
+
+            .schedule-header h2 {
+                font-size: 1.3em;
+            }
+
+            .schedule-container {
+                max-height: 350px;
+            }
+
+            .match-card {
+                padding: 12px;
+            }
+
+            .match-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .match-body {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .match-opponent {
+                font-size: 1.1em;
             }
         }
     </style>
@@ -169,10 +411,158 @@
             -->
         </div>
 
+        <!-- Sports Schedule Section -->
+        <h2 class="section-title">내맘대로 🤪</h2>
+        <div class="sports-grid">
+            <!-- Volleyball Schedule -->
+            <div class="schedule-section">
+                <div class="schedule-header volleyball">
+                    <div class="team-logo">🏐</div>
+                    <h2 id="volleyball-team-name">경기 일정</h2>
+                    <p class="season" id="volleyball-season-info">로딩 중...</p>
+                </div>
+                <div id="volleyball-schedule-content" class="loading">
+                    경기 일정을 불러오는 중...
+                </div>
+            </div>
+
+            <!-- Baseball Schedule -->
+            <div class="schedule-section">
+                <div class="schedule-header baseball">
+                    <div class="team-logo">⚾</div>
+                    <h2 id="baseball-team-name">경기 일정</h2>
+                    <p class="season" id="baseball-season-info">로딩 중...</p>
+                </div>
+                <div id="baseball-schedule-content" class="loading">
+                    경기 일정을 불러오는 중...
+                </div>
+            </div>
+        </div>
+
         <!-- Footer -->
         <div class="footer">
             <p>Made with ❤️ by Eugene</p>
         </div>
     </div>
+
+    <script>
+        // 날짜 포맷팅 함수
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+            const dayOfWeek = days[date.getDay()];
+
+            return `${year}.${month}.${day} (${dayOfWeek})`;
+        }
+
+        // 오늘 이후 경기만 필터링
+        function filterUpcomingMatches(matches) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            return matches.filter(match => {
+                const matchDate = new Date(match.date);
+                matchDate.setHours(0, 0, 0, 0);
+                return matchDate >= today;
+            });
+        }
+
+        // 경기 일정 로드 및 표시
+        async function loadSchedule(jsonFile, teamNameId, seasonInfoId, contentId, sportIcon) {
+            try {
+                const response = await fetch(jsonFile);
+                if (!response.ok) {
+                    throw new Error('경기 일정을 불러올 수 없습니다.');
+                }
+
+                const data = await response.json();
+                const upcomingMatches = filterUpcomingMatches(data.matches);
+                displaySchedule(data, upcomingMatches, teamNameId, seasonInfoId, contentId, sportIcon);
+            } catch (error) {
+                console.error(`Error loading ${jsonFile}:`, error);
+                document.getElementById(contentId).className = 'error';
+                document.getElementById(contentId).innerHTML = '경기 일정을 불러오는데 실패했습니다.';
+            }
+        }
+
+        // 경기 일정 표시
+        function displaySchedule(data, matches, teamNameId, seasonInfoId, contentId, sportIcon) {
+            const teamNameEl = document.getElementById(teamNameId);
+            const seasonInfoEl = document.getElementById(seasonInfoId);
+            const scheduleContentEl = document.getElementById(contentId);
+
+            // 헤더 정보 업데이트
+            teamNameEl.textContent = data.team;
+            seasonInfoEl.textContent = data.season;
+
+            // 경기가 없는 경우
+            if (matches.length === 0) {
+                scheduleContentEl.className = 'no-schedule';
+                scheduleContentEl.innerHTML = `
+                    <div class="no-schedule-icon">${sportIcon}</div>
+                    <div class="no-schedule-text">경기 일정 없음</div>
+                `;
+                return;
+            }
+
+            // 경기 일정 컨테이너 생성
+            const container = document.createElement('div');
+            container.className = 'schedule-container';
+
+            // 각 경기 카드 생성
+            matches.forEach(match => {
+                const card = document.createElement('div');
+                card.className = `match-card ${match.home ? 'home' : 'away'}`;
+
+                card.innerHTML = `
+                    <div class="match-header">
+                        <div>
+                            <div class="match-date">${formatDate(match.date)}</div>
+                            <div class="match-time">${match.time}</div>
+                        </div>
+                        <div class="match-round">${match.round}</div>
+                    </div>
+                    <div class="match-body">
+                        <div>
+                            <div class="match-opponent">vs ${match.opponent}</div>
+                            <div class="match-location">📍 ${match.location}</div>
+                        </div>
+                        <div class="match-badge">${match.home ? 'HOME' : 'AWAY'}</div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            // 기존 로딩 메시지 제거하고 일정 표시
+            scheduleContentEl.className = '';
+            scheduleContentEl.innerHTML = '';
+            scheduleContentEl.appendChild(container);
+        }
+
+        // 페이지 로드 시 실행
+        window.addEventListener('DOMContentLoaded', () => {
+            // 배구 일정 로드
+            loadSchedule(
+                'volleyball-schedule.json',
+                'volleyball-team-name',
+                'volleyball-season-info',
+                'volleyball-schedule-content',
+                '🏐'
+            );
+
+            // 야구 일정 로드
+            loadSchedule(
+                'kiwoom-schedule.json',
+                'baseball-team-name',
+                'baseball-season-info',
+                'baseball-schedule-content',
+                '⚾'
+            );
+        });
+    </script>
 </body>
 </html>
