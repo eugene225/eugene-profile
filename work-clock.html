@@ -239,6 +239,7 @@
             let totalWorkDays = 0;
             let pastWorkDays = 0;
             let workedToday = false;
+            let todayInProgress = false;
 
             records.forEach(record => {
                 if (record.dayTpCd !== 'WORK') return;
@@ -251,21 +252,38 @@
                     parseInt(record.checkYmd.substring(6, 8))
                 );
 
-                if (recordDate <= today) {
+                const isToday = recordDate.getTime() === today.getTime();
+                const workTime = record.sumWorkTime;
+                const hasWorkTime = workTime && workTime !== '0000';
+
+                if (recordDate < today) {
+                    // 과거 날짜
                     pastWorkDays++;
 
-                    const workTime = record.sumWorkTime;
-                    if (workTime && workTime !== '0000') {
+                    if (hasWorkTime) {
                         const hours = parseInt(workTime.substring(0, 2), 10);
                         const minutes = parseInt(workTime.substring(2, 4), 10);
 
                         if (!isNaN(hours) && !isNaN(minutes)) {
                             workedMinutes += hours * 60 + minutes;
-
-                            if (recordDate.getTime() === today.getTime()) {
-                                workedToday = true;
-                            }
                         }
+                    }
+                } else if (isToday) {
+                    // 오늘
+                    if (hasWorkTime) {
+                        // 오늘 퇴근 찍음
+                        pastWorkDays++;
+                        workedToday = true;
+
+                        const hours = parseInt(workTime.substring(0, 2), 10);
+                        const minutes = parseInt(workTime.substring(2, 4), 10);
+
+                        if (!isNaN(hours) && !isNaN(minutes)) {
+                            workedMinutes += hours * 60 + minutes;
+                        }
+                    } else {
+                        // 오늘 퇴근 안찍음 (진행 중)
+                        todayInProgress = true;
                     }
                 }
             });
@@ -275,7 +293,12 @@
             const shouldWorkMore = totalRequiredMinutes - workedMinutes;
             const differenceMinutes = workedMinutes - shouldHaveWorked;
 
-            const todayStatus = workedToday ? '오늘 포함' : '오늘 제외';
+            let todayStatus = '오늘 제외';
+            if (workedToday) {
+                todayStatus = '오늘 포함';
+            } else if (todayInProgress) {
+                todayStatus = '오늘 진행 중 (퇴근 미체크)';
+            }
             const remainingWorkDays = totalWorkDays - pastWorkDays;
 
             const workedHours = Math.floor(workedMinutes / 60);
@@ -323,7 +346,7 @@
                     </div>
                     <div style="display:flex;gap:10px;margin-top:20px">
                         <button id="work-clock-reset-empid" style="flex:1;padding:12px;background:#ff9800;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold">
-                            🔄 empId 재설정
+                            empId 재설정
                         </button>
                         <button id="work-clock-close" style="flex:2;padding:12px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;border:none;border-radius:8px;cursor:pointer;font-size:16px;font-weight:bold">
                             닫기
