@@ -493,14 +493,14 @@
                 <span class="project-tag">Bookmarklet + Extension</span>
             </a>
 
-            <!-- GitHub PR Creator Project -->
-            <a href="#extension-guide" class="project-card reveal delay-2">
+            <!-- playauto-create-pr (npm) -->
+            <a href="#npm" class="project-card reveal delay-2">
                 <div class="project-icon">🔀</div>
-                <h3 class="project-title">GitHub PR Creator</h3>
+                <h3 class="project-title">playauto-create-pr</h3>
                 <p class="project-description">
-                    owner/repo, base/head, 토큰 입력만으로 PR 제목·본문 자동 생성 후 PR 생성
+                    Playauto PR 생성 CLI. owner/repo, base/head, 토큰으로 PR 제목·본문 자동 생성 후 PR 생성.
                 </p>
-                <span class="project-tag">Chrome Extension</span>
+                <span class="project-tag">npm</span>
             </a>
 
             <!-- Add more projects here -->
@@ -523,13 +523,11 @@
                 <div class="guide-card">
                     <h4>1) 확장 파일 다운로드</h4>
                     <p>아래 버튼을 눌러 압축 파일을 다운로드하세요.</p>
-                    <p style="margin-top:12px;display:flex;flex-wrap:wrap;gap:10px;">
+                    <p style="margin-top:12px;">
                         <a class="download-btn" href="downloads/work-clock-extension.zip" download>⬇️ Work Clock Extension</a>
-                        <a class="download-btn" href="downloads/github-pr-extension.zip" download>⬇️ GitHub PR Extension</a>
                     </p>
                     <p id="ext-meta" style="margin-top:10px;color:var(--muted);font-size:0.9rem;">
-                        Work Clock: <strong id="ext-version">v-</strong> · <strong id="ext-updated">-</strong>
-                        <span style="margin-left:14px;">GitHub PR: <strong id="ext-github-pr-version">v-</strong></span>
+                        버전: <strong id="ext-version">v-</strong> · 업데이트: <strong id="ext-updated">-</strong>
                     </p>
                 </div>
                 <div class="guide-card">
@@ -539,6 +537,26 @@
                 <div class="guide-card">
                     <h4>3) 단축키 설정</h4>
                     <p><code>chrome://extensions/shortcuts</code>에서 <strong>Work Clock</strong>의 단축키를 지정하세요. 기본 제안은 <strong>Alt+Shift+W</strong>입니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- npm Package: playauto-create-pr -->
+        <h2 id="npm" class="section-title reveal delay-1"><span>npm</span></h2>
+        <section class="guide-section reveal delay-2">
+            <div class="guide-grid">
+                <div class="guide-card">
+                    <h4>playauto-create-pr</h4>
+                    <p>Playauto PR 생성 CLI 도구. GitHub PR 제목·본문 자동 생성 후 PR 생성. <a href="https://www.npmjs.com/package/playauto-create-pr" target="_blank" rel="noopener noreferrer" style="color:var(--orange-600);font-weight:600;">npm</a></p>
+                    <p style="margin-top:10px;color:var(--muted);font-size:0.9rem;">Install: <code style="background:var(--orange-100);padding:4px 10px;border-radius:6px;">npm i playauto-create-pr</code></p>
+                    <p style="margin-top:14px;font-size:0.9rem;color:var(--ink);">.env 환경변수:</p>
+                    <ul style="margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:0.9rem;line-height:1.8;">
+                        <li><code>GITHUB_TOKEN</code>: 개인 깃허브 토큰 (필수)</li>
+                        <li><code>PR_OWNER</code>: GitHub 레포지토리 owner (필수)</li>
+                        <li><code>PR_REPO</code>: 레포지토리 이름 (필수)</li>
+                        <li><code>PR_API_URL</code>: PR 템플릿 API URL (필수)</li>
+                        <li><code>PR_BASE</code>: 기본 base 브랜치 (기본: main)</li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -581,22 +599,13 @@
         // 확장 메타 정보 표시
         (async () => {
             try {
-                const [wcRes, prRes] = await Promise.all([
-                    fetch('extensions/work-clock/manifest.json', { cache: 'no-store' }),
-                    fetch('extensions/github-pr/manifest.json', { cache: 'no-store' })
-                ]);
-                if (wcRes.ok) {
-                    const data = await wcRes.json();
-                    const versionEl = document.getElementById('ext-version');
-                    const updatedEl = document.getElementById('ext-updated');
-                    if (versionEl && data.version) versionEl.textContent = `v${data.version}`;
-                    if (updatedEl && data.x_last_updated) updatedEl.textContent = data.x_last_updated;
-                }
-                if (prRes.ok) {
-                    const data = await prRes.json();
-                    const el = document.getElementById('ext-github-pr-version');
-                    if (el && data.version) el.textContent = `v${data.version}`;
-                }
+                const res = await fetch('extensions/work-clock/manifest.json', { cache: 'no-store' });
+                if (!res.ok) return;
+                const data = await res.json();
+                const versionEl = document.getElementById('ext-version');
+                const updatedEl = document.getElementById('ext-updated');
+                if (versionEl && data.version) versionEl.textContent = `v${data.version}`;
+                if (updatedEl && data.x_last_updated) updatedEl.textContent = data.x_last_updated;
             } catch (e) {
                 // ignore display failures
             }
