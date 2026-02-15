@@ -493,6 +493,16 @@
                 <span class="project-tag">Bookmarklet + Extension</span>
             </a>
 
+            <!-- GitHub PR Creator Project -->
+            <a href="#extension-guide" class="project-card reveal delay-2">
+                <div class="project-icon">🔀</div>
+                <h3 class="project-title">GitHub PR Creator</h3>
+                <p class="project-description">
+                    owner/repo, base/head, 토큰 입력만으로 PR 제목·본문 자동 생성 후 PR 생성
+                </p>
+                <span class="project-tag">Chrome Extension</span>
+            </a>
+
             <!-- Add more projects here -->
             <!-- Example:
             <a href="project2.html" class="project-card">
@@ -508,18 +518,18 @@
 
         <!-- Extension Guide Section -->
         <h2 class="section-title reveal delay-1"><span>Extension Guide</span></h2>
-        <section class="guide-section reveal delay-2">
+        <section id="extension-guide" class="guide-section reveal delay-2">
             <div class="guide-grid">
                 <div class="guide-card">
                     <h4>1) 확장 파일 다운로드</h4>
                     <p>아래 버튼을 눌러 압축 파일을 다운로드하세요.</p>
-                    <p style="margin-top:12px;">
-                        <a class="download-btn" href="downloads/work-clock-extension.zip" download>
-                            ⬇️ Work Clock Extension
-                        </a>
+                    <p style="margin-top:12px;display:flex;flex-wrap:wrap;gap:10px;">
+                        <a class="download-btn" href="downloads/work-clock-extension.zip" download>⬇️ Work Clock Extension</a>
+                        <a class="download-btn" href="downloads/github-pr-extension.zip" download>⬇️ GitHub PR Extension</a>
                     </p>
                     <p id="ext-meta" style="margin-top:10px;color:var(--muted);font-size:0.9rem;">
-                        버전: <strong id="ext-version">v-</strong> · 업데이트: <strong id="ext-updated">-</strong>
+                        Work Clock: <strong id="ext-version">v-</strong> · <strong id="ext-updated">-</strong>
+                        <span style="margin-left:14px;">GitHub PR: <strong id="ext-github-pr-version">v-</strong></span>
                     </p>
                 </div>
                 <div class="guide-card">
@@ -571,16 +581,21 @@
         // 확장 메타 정보 표시
         (async () => {
             try {
-                const res = await fetch('extensions/work-clock/manifest.json', { cache: 'no-store' });
-                if (!res.ok) return;
-                const data = await res.json();
-                const versionEl = document.getElementById('ext-version');
-                const updatedEl = document.getElementById('ext-updated');
-                if (versionEl && data.version) {
-                    versionEl.textContent = `v${data.version}`;
+                const [wcRes, prRes] = await Promise.all([
+                    fetch('extensions/work-clock/manifest.json', { cache: 'no-store' }),
+                    fetch('extensions/github-pr/manifest.json', { cache: 'no-store' })
+                ]);
+                if (wcRes.ok) {
+                    const data = await wcRes.json();
+                    const versionEl = document.getElementById('ext-version');
+                    const updatedEl = document.getElementById('ext-updated');
+                    if (versionEl && data.version) versionEl.textContent = `v${data.version}`;
+                    if (updatedEl && data.x_last_updated) updatedEl.textContent = data.x_last_updated;
                 }
-                if (updatedEl && data.x_last_updated) {
-                    updatedEl.textContent = data.x_last_updated;
+                if (prRes.ok) {
+                    const data = await prRes.json();
+                    const el = document.getElementById('ext-github-pr-version');
+                    if (el && data.version) el.textContent = `v${data.version}`;
                 }
             } catch (e) {
                 // ignore display failures
