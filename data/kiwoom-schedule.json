@@ -1,0 +1,1183 @@
+{
+  "team": "키움 히어로즈",
+  "season": "2026 KBO 리그",
+  "logo": "⚾",
+  "matches": [
+    {
+      "date": "2026-03-12",
+      "time": "13:00",
+      "opponent": "두산",
+      "home": false,
+      "location": "이천(두산)",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-13",
+      "time": "13:00",
+      "opponent": "두산",
+      "home": false,
+      "location": "이천(두산)",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-14",
+      "time": "13:00",
+      "opponent": "NC",
+      "home": false,
+      "location": "마산",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-15",
+      "time": "13:00",
+      "opponent": "NC",
+      "home": false,
+      "location": "마산",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-16",
+      "time": "13:00",
+      "opponent": "롯데",
+      "home": false,
+      "location": "사직",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-17",
+      "time": "13:00",
+      "opponent": "롯데",
+      "home": false,
+      "location": "사직",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-19",
+      "time": "13:00",
+      "opponent": "KT",
+      "home": false,
+      "location": "수원",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-20",
+      "time": "13:00",
+      "opponent": "KT",
+      "home": false,
+      "location": "수원",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-21",
+      "time": "13:00",
+      "opponent": "SSG",
+      "home": false,
+      "location": "문학",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-22",
+      "time": "13:00",
+      "opponent": "SSG",
+      "home": false,
+      "location": "문학",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-23",
+      "time": "13:00",
+      "opponent": "LG",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-24",
+      "time": "13:00",
+      "opponent": "LG",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_e"
+    },
+    {
+      "date": "2026-03-28",
+      "time": "14:00",
+      "opponent": "한화",
+      "home": false,
+      "location": "대전",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-03-29",
+      "time": "14:00",
+      "opponent": "한화",
+      "home": false,
+      "location": "대전",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-03-31",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": false,
+      "location": "문학",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-01",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": false,
+      "location": "문학",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-02",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": false,
+      "location": "문학",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-03",
+      "time": "18:30",
+      "opponent": "LG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-04",
+      "time": "17:00",
+      "opponent": "LG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-05",
+      "time": "14:00",
+      "opponent": "LG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-07",
+      "time": "18:30",
+      "opponent": "두산",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-08",
+      "time": "18:30",
+      "opponent": "두산",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-09",
+      "time": "18:30",
+      "opponent": "두산",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-10",
+      "time": "18:30",
+      "opponent": "롯데",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-11",
+      "time": "17:00",
+      "opponent": "롯데",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-12",
+      "time": "14:00",
+      "opponent": "롯데",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-14",
+      "time": "18:30",
+      "opponent": "KIA",
+      "home": false,
+      "location": "광주",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-15",
+      "time": "18:30",
+      "opponent": "KIA",
+      "home": false,
+      "location": "광주",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-16",
+      "time": "18:30",
+      "opponent": "KIA",
+      "home": false,
+      "location": "광주",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-17",
+      "time": "18:30",
+      "opponent": "KT",
+      "home": false,
+      "location": "수원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-18",
+      "time": "17:00",
+      "opponent": "KT",
+      "home": false,
+      "location": "수원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-19",
+      "time": "14:00",
+      "opponent": "KT",
+      "home": false,
+      "location": "수원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-21",
+      "time": "18:30",
+      "opponent": "NC",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-22",
+      "time": "18:30",
+      "opponent": "NC",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-23",
+      "time": "18:30",
+      "opponent": "NC",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-24",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-25",
+      "time": "17:00",
+      "opponent": "삼성",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-26",
+      "time": "14:00",
+      "opponent": "삼성",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-28",
+      "time": "18:30",
+      "opponent": "롯데",
+      "home": false,
+      "location": "사직",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-29",
+      "time": "18:30",
+      "opponent": "롯데",
+      "home": false,
+      "location": "사직",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-04-30",
+      "time": "18:30",
+      "opponent": "롯데",
+      "home": false,
+      "location": "사직",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-01",
+      "time": "18:30",
+      "opponent": "두산",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-02",
+      "time": "17:00",
+      "opponent": "두산",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-03",
+      "time": "14:00",
+      "opponent": "두산",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-05",
+      "time": "14:00",
+      "opponent": "삼성",
+      "home": false,
+      "location": "대구",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-06",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": false,
+      "location": "대구",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-07",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": false,
+      "location": "대구",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-08",
+      "time": "18:30",
+      "opponent": "KT",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-09",
+      "time": "17:00",
+      "opponent": "KT",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-10",
+      "time": "14:00",
+      "opponent": "KT",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-12",
+      "time": "18:30",
+      "opponent": "한화",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-13",
+      "time": "18:30",
+      "opponent": "한화",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-14",
+      "time": "18:30",
+      "opponent": "한화",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-15",
+      "time": "18:30",
+      "opponent": "NC",
+      "home": false,
+      "location": "창원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-16",
+      "time": "17:00",
+      "opponent": "NC",
+      "home": false,
+      "location": "창원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-17",
+      "time": "14:00",
+      "opponent": "NC",
+      "home": false,
+      "location": "창원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-19",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-20",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-21",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-22",
+      "time": "18:30",
+      "opponent": "LG",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-23",
+      "time": "17:00",
+      "opponent": "LG",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-24",
+      "time": "14:00",
+      "opponent": "LG",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-26",
+      "time": "18:30",
+      "opponent": "KIA",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-27",
+      "time": "18:30",
+      "opponent": "KIA",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-28",
+      "time": "18:30",
+      "opponent": "KIA",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-29",
+      "time": "18:30",
+      "opponent": "KT",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-30",
+      "time": "17:00",
+      "opponent": "KT",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-05-31",
+      "time": "14:00",
+      "opponent": "KT",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-02",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": false,
+      "location": "문학",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-03",
+      "time": "17:00",
+      "opponent": "SSG",
+      "home": false,
+      "location": "문학",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-04",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": false,
+      "location": "문학",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-05",
+      "time": "18:30",
+      "opponent": "두산",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-06",
+      "time": "17:00",
+      "opponent": "두산",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-07",
+      "time": "17:00",
+      "opponent": "두산",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-09",
+      "time": "18:30",
+      "opponent": "NC",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-10",
+      "time": "18:30",
+      "opponent": "NC",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-11",
+      "time": "18:30",
+      "opponent": "NC",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-12",
+      "time": "18:30",
+      "opponent": "한화",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-13",
+      "time": "17:00",
+      "opponent": "한화",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-14",
+      "time": "14:00",
+      "opponent": "한화",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-16",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": false,
+      "location": "대구",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-17",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": false,
+      "location": "대구",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-18",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": false,
+      "location": "대구",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-19",
+      "time": "18:30",
+      "opponent": "롯데",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-20",
+      "time": "17:00",
+      "opponent": "롯데",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-21",
+      "time": "14:00",
+      "opponent": "롯데",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-23",
+      "time": "18:30",
+      "opponent": "KIA",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-24",
+      "time": "18:30",
+      "opponent": "KIA",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-25",
+      "time": "18:30",
+      "opponent": "KIA",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-26",
+      "time": "18:30",
+      "opponent": "NC",
+      "home": false,
+      "location": "창원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-27",
+      "time": "17:00",
+      "opponent": "NC",
+      "home": false,
+      "location": "창원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-28",
+      "time": "17:00",
+      "opponent": "NC",
+      "home": false,
+      "location": "창원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-06-30",
+      "time": "18:30",
+      "opponent": "LG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-01",
+      "time": "18:30",
+      "opponent": "LG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-02",
+      "time": "18:30",
+      "opponent": "LG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-03",
+      "time": "18:30",
+      "opponent": "두산",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-04",
+      "time": "18:00",
+      "opponent": "두산",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-05",
+      "time": "14:00",
+      "opponent": "두산",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-07",
+      "time": "18:30",
+      "opponent": "KT",
+      "home": false,
+      "location": "수원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-08",
+      "time": "18:30",
+      "opponent": "KT",
+      "home": false,
+      "location": "수원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-09",
+      "time": "18:30",
+      "opponent": "KT",
+      "home": false,
+      "location": "수원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-16",
+      "time": "18:30",
+      "opponent": "한화",
+      "home": false,
+      "location": "대전",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-17",
+      "time": "18:30",
+      "opponent": "한화",
+      "home": false,
+      "location": "대전",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-18",
+      "time": "18:00",
+      "opponent": "한화",
+      "home": false,
+      "location": "대전",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-19",
+      "time": "18:00",
+      "opponent": "한화",
+      "home": false,
+      "location": "대전",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-21",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-22",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-23",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-24",
+      "time": "18:30",
+      "opponent": "KIA",
+      "home": false,
+      "location": "광주",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-25",
+      "time": "18:00",
+      "opponent": "KIA",
+      "home": false,
+      "location": "광주",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-26",
+      "time": "18:00",
+      "opponent": "KIA",
+      "home": false,
+      "location": "광주",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-28",
+      "time": "18:30",
+      "opponent": "LG",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-29",
+      "time": "18:30",
+      "opponent": "LG",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-30",
+      "time": "18:30",
+      "opponent": "LG",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-07-31",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-01",
+      "time": "18:00",
+      "opponent": "SSG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-02",
+      "time": "14:00",
+      "opponent": "SSG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-04",
+      "time": "18:30",
+      "opponent": "롯데",
+      "home": false,
+      "location": "사직",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-05",
+      "time": "18:30",
+      "opponent": "롯데",
+      "home": false,
+      "location": "사직",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-06",
+      "time": "18:30",
+      "opponent": "롯데",
+      "home": false,
+      "location": "사직",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-07",
+      "time": "18:30",
+      "opponent": "한화",
+      "home": false,
+      "location": "대전",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-08",
+      "time": "18:00",
+      "opponent": "한화",
+      "home": false,
+      "location": "대전",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-09",
+      "time": "18:00",
+      "opponent": "한화",
+      "home": false,
+      "location": "대전",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-11",
+      "time": "18:30",
+      "opponent": "LG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-12",
+      "time": "18:30",
+      "opponent": "LG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-13",
+      "time": "18:30",
+      "opponent": "LG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-14",
+      "time": "18:30",
+      "opponent": "KT",
+      "home": false,
+      "location": "수원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-15",
+      "time": "18:00",
+      "opponent": "KT",
+      "home": false,
+      "location": "수원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-16",
+      "time": "18:00",
+      "opponent": "KT",
+      "home": false,
+      "location": "수원",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-18",
+      "time": "18:30",
+      "opponent": "롯데",
+      "home": false,
+      "location": "사직",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-19",
+      "time": "18:30",
+      "opponent": "롯데",
+      "home": false,
+      "location": "사직",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-20",
+      "time": "18:30",
+      "opponent": "롯데",
+      "home": false,
+      "location": "사직",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-21",
+      "time": "18:30",
+      "opponent": "KIA",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-22",
+      "time": "18:00",
+      "opponent": "KIA",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-23",
+      "time": "14:00",
+      "opponent": "KIA",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-25",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-26",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-27",
+      "time": "18:30",
+      "opponent": "삼성",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-28",
+      "time": "18:30",
+      "opponent": "두산",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "18:00",
+      "opponent": "두산",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-08-30",
+      "time": "18:00",
+      "opponent": "두산",
+      "home": false,
+      "location": "잠실",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-09-01",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-09-02",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-09-03",
+      "time": "18:30",
+      "opponent": "SSG",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-09-04",
+      "time": "18:30",
+      "opponent": "NC",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "17:00",
+      "opponent": "NC",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    },
+    {
+      "date": "2026-09-06",
+      "time": "14:00",
+      "opponent": "NC",
+      "home": true,
+      "location": "고척",
+      "round": "kbo_r"
+    }
+  ]
+}

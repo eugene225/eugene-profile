@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eugene's Profile</title>
-    <link rel="icon" href="dev.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="dev.svg">
+    <link rel="icon" href="assets/dev.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="assets/dev.svg">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap');
 
@@ -514,7 +514,7 @@
                     <h4>1) 확장 파일 다운로드</h4>
                     <p>아래 버튼을 눌러 압축 파일을 다운로드하세요.</p>
                     <p style="margin-top:12px;">
-                        <a class="download-btn" href="work-clock-extension.zip" download>
+                        <a class="download-btn" href="downloads/work-clock-extension.zip" download>
                             ⬇️ Work Clock Extension
                         </a>
                     </p>
@@ -571,7 +571,7 @@
         // 확장 메타 정보 표시
         (async () => {
             try {
-                const res = await fetch('work-clock-extension/manifest.json', { cache: 'no-store' });
+                const res = await fetch('extensions/work-clock/manifest.json', { cache: 'no-store' });
                 if (!res.ok) return;
                 const data = await res.json();
                 const versionEl = document.getElementById('ext-version');
@@ -688,7 +688,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             // 배구 일정 로드
             loadSchedule(
-                'volleyball-schedule.json',
+                'data/volleyball-schedule.json',
                 'volleyball-team-name',
                 'volleyball-season-info',
                 'volleyball-schedule-content',
@@ -697,7 +697,7 @@
 
             // 야구 일정 로드
             loadSchedule(
-                'kiwoom-schedule.json',
+                'data/kiwoom-schedule.json',
                 'baseball-team-name',
                 'baseball-season-info',
                 'baseball-schedule-content',

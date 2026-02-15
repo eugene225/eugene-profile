@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
-EXT_DIR="$ROOT_DIR/work-clock-extension"
-ZIP_PATH="$ROOT_DIR/work-clock-extension.zip"
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+EXT_DIR="$ROOT_DIR/extensions/work-clock"
+ZIP_PATH="$ROOT_DIR/downloads/work-clock-extension.zip"
 
 if [ ! -d "$EXT_DIR" ]; then
   echo "Missing extension directory: $EXT_DIR" >&2
