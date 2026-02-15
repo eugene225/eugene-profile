@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "Work Clock",
+  "version": "1.0.1",
+  "x_last_updated": "2026-02-15",
+  "description": "근무시간 계산기 북마크릿을 확장 아이콘으로 실행합니다.",
+  "action": {
+    "default_title": "근무시간 계산기",
+    "default_icon": {
+      "16": "icons/clock-16.png",
+      "32": "icons/clock-32.png",
+      "48": "icons/clock-48.png",
+      "128": "icons/clock-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://workplace.worksmobile.com/*"
+  ],
+  "commands": {
+    "run-work-clock": {
+      "suggested_key": {
+        "default": "Alt+Shift+W"
+      },
+      "description": "근무시간 계산기 실행"
+    }
+  },
+  "icons": {
+    "16": "icons/clock-16.png",
+    "32": "icons/clock-32.png",
+    "48": "icons/clock-48.png",
+    "128": "icons/clock-128.png"
+  }
+}

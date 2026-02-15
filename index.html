@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eugene's Profile</title>
+    <link rel="icon" href="dev.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="dev.svg">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap');
 
@@ -147,6 +149,67 @@
             color: var(--muted);
             padding: 12px;
             font-size: 0.85rem;
+        }
+
+        .guide-section {
+            background: var(--paper);
+            padding: 28px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(255, 122, 59, 0.12);
+            margin-bottom: 36px;
+        }
+
+        .guide-title {
+            font-size: 1.2rem;
+            margin-bottom: 14px;
+            color: var(--ink);
+        }
+
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+        }
+
+        .guide-card {
+            background: #fffaf6;
+            border: 1px solid rgba(255, 122, 59, 0.16);
+            border-radius: 16px;
+            padding: 18px;
+        }
+
+        .guide-card h4 {
+            margin-bottom: 10px;
+            color: var(--orange-700);
+            font-size: 1rem;
+        }
+
+        .guide-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: var(--orange-600);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 10px 22px rgba(31, 26, 23, 0.18);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 26px rgba(31, 26, 23, 0.24);
+            background: var(--orange-700);
         }
 
         /* Sports Schedule Grid */
@@ -427,7 +490,7 @@
                 <p class="project-description">
                     어디서나 클릭 한 번으로 자동 이동 & 근무시간 계산하는 북마크릿 도구
                 </p>
-                <span class="project-tag">Bookmarklet</span>
+                <span class="project-tag">Bookmarklet + Extension</span>
             </a>
 
             <!-- Add more projects here -->
@@ -442,6 +505,33 @@
             </a>
             -->
         </div>
+
+        <!-- Extension Guide Section -->
+        <h2 class="section-title reveal delay-1"><span>Extension Guide</span></h2>
+        <section class="guide-section reveal delay-2">
+            <div class="guide-grid">
+                <div class="guide-card">
+                    <h4>1) 확장 파일 다운로드</h4>
+                    <p>아래 버튼을 눌러 압축 파일을 다운로드하세요.</p>
+                    <p style="margin-top:12px;">
+                        <a class="download-btn" href="work-clock-extension.zip" download>
+                            ⬇️ Work Clock Extension
+                        </a>
+                    </p>
+                    <p id="ext-meta" style="margin-top:10px;color:var(--muted);font-size:0.9rem;">
+                        버전: <strong id="ext-version">v-</strong> · 업데이트: <strong id="ext-updated">-</strong>
+                    </p>
+                </div>
+                <div class="guide-card">
+                    <h4>2) 설치 방법</h4>
+                    <p>Chrome에서 <code>chrome://extensions</code> → 개발자 모드 ON → <strong>압축해제된 확장 프로그램 로드</strong> 클릭 → 다운로드한 zip 압축 해제 폴더 선택.</p>
+                </div>
+                <div class="guide-card">
+                    <h4>3) 단축키 설정</h4>
+                    <p><code>chrome://extensions/shortcuts</code>에서 <strong>Work Clock</strong>의 단축키를 지정하세요. 기본 제안은 <strong>Alt+Shift+W</strong>입니다.</p>
+                </div>
+            </div>
+        </section>
 
         <!-- Sports Schedule Section -->
         <h2 class="section-title reveal delay-1"><span>내맘대로 🤪</span></h2>
@@ -478,6 +568,25 @@
     </div>
 
     <script>
+        // 확장 메타 정보 표시
+        (async () => {
+            try {
+                const res = await fetch('work-clock-extension/manifest.json', { cache: 'no-store' });
+                if (!res.ok) return;
+                const data = await res.json();
+                const versionEl = document.getElementById('ext-version');
+                const updatedEl = document.getElementById('ext-updated');
+                if (versionEl && data.version) {
+                    versionEl.textContent = `v${data.version}`;
+                }
+                if (updatedEl && data.x_last_updated) {
+                    updatedEl.textContent = data.x_last_updated;
+                }
+            } catch (e) {
+                // ignore display failures
+            }
+        })();
+
         // 날짜 포맷팅 함수
         function formatDate(dateString) {
             const date = new Date(dateString);

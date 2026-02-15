@@ -1,232 +1,3 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>근무시간 계산기 - 자동 이동</title>
-    <link rel="icon" href="clock.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="clock.svg">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap');
-
-        :root {
-            color-scheme: light;
-            --ink: #1f1a17;
-            --muted: #6e6159;
-            --cream: #fff7f0;
-            --paper: #ffffff;
-            --orange-500: #ff7a3b;
-            --orange-600: #f2601a;
-            --orange-700: #d94b0c;
-            --orange-100: #ffe4d6;
-            --shadow-soft: 0 18px 40px rgba(31, 26, 23, 0.14);
-            --shadow-card: 0 10px 24px rgba(31, 26, 23, 0.12);
-        }
-
-        body {
-            font-family: "Space Grotesk", "IBM Plex Sans KR", "Apple SD Gothic Neo", sans-serif;
-            color: var(--ink);
-            max-width: 860px;
-            margin: 0 auto;
-            padding: 56px 20px 40px;
-            background:
-                radial-gradient(circle at top right, rgba(255, 180, 135, 0.28), transparent 60%),
-                radial-gradient(circle at 10% 20%, rgba(255, 122, 59, 0.16), transparent 55%),
-                linear-gradient(140deg, #fff6ee 0%, #ffefdf 50%, #ffe6d4 100%);
-            min-height: 100vh;
-        }
-        .container {
-            background: var(--paper);
-            padding: 48px;
-            border-radius: 28px;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(255, 122, 59, 0.12);
-        }
-        h1 {
-            color: var(--ink);
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 2.4rem;
-        }
-        .subtitle {
-            text-align: center;
-            color: var(--muted);
-            margin-bottom: 32px;
-            font-size: 1.05rem;
-        }
-        .install-box {
-            background: #fff4ea;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            margin: 32px 0;
-            box-shadow: var(--shadow-card);
-            border: 1px solid rgba(255, 122, 59, 0.2);
-        }
-        .install-box p {
-            color: var(--ink);
-            margin-bottom: 18px;
-            font-size: 1.15rem;
-            font-weight: 600;
-        }
-        .bookmarklet {
-            display: inline-block;
-            padding: 16px 36px;
-            background: var(--orange-600);
-            color: #fff;
-            text-decoration: none;
-            border-radius: 999px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: move;
-            box-shadow: 0 10px 24px rgba(31, 26, 23, 0.2);
-            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
-        }
-        .bookmarklet:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 14px 30px rgba(31, 26, 23, 0.25);
-            background: var(--orange-700);
-        }
-        .feature {
-            background: #fffaf6;
-            padding: 24px;
-            border-radius: 16px;
-            margin: 18px 0;
-            border: 1px solid rgba(255, 122, 59, 0.18);
-        }
-        .feature h3 {
-            color: var(--orange-700);
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-        .highlight {
-            background: #fff6ee;
-            border: 2px solid rgba(255, 122, 59, 0.4);
-            padding: 24px;
-            border-radius: 18px;
-            margin: 22px 0;
-        }
-        .highlight h3 {
-            color: var(--orange-700);
-            margin-top: 0;
-        }
-        code {
-            background: var(--orange-100);
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-family: "SFMono-Regular", "Consolas", "Monaco", monospace;
-            color: var(--orange-700);
-        }
-        ul {
-            line-height: 2;
-        }
-
-        ol {
-            line-height: 1.8;
-        }
-
-        .tip {
-            margin-top: 14px;
-            padding: 12px 14px;
-            background: #fff6ee;
-            border-radius: 10px;
-            border-left: 4px solid var(--orange-500);
-            font-size: 0.92rem;
-            color: var(--muted);
-        }
-
-        .warn {
-            margin-top: 10px;
-            padding: 12px 14px;
-            background: #fff4ee;
-            border-radius: 10px;
-            border-left: 4px solid var(--orange-700);
-            font-size: 0.92rem;
-            color: var(--muted);
-        }
-
-        @media (max-width: 720px) {
-            body {
-                padding: 40px 16px;
-            }
-
-            .container {
-                padding: 32px 24px;
-            }
-
-            .install-box {
-                padding: 28px 20px;
-            }
-
-            h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🕒💻😵‍💫</h1>
-        <p class="subtitle">어디서나 클릭 한 번으로 자동 이동 & 계산</p>
-
-        <div class="install-box">
-            <p>👇 이 버튼을 북마크바로 드래그하세요</p>
-            <a id="bookmarklet" href="#" class="bookmarklet">🕒 근무시간 계산기</a>
-        </div>
-
-        <div class="highlight">
-            <h3>🔍 empId 찾는 방법</h3>
-            <p><strong>개발자 도구를 사용하여 empId를 확인하세요:</strong></p>
-            <ol>
-                <li><strong>F12</strong> 키를 눌러 개발자 도구 열기</li>
-                <li><strong>Network</strong> 탭 선택</li>
-                <li>'근로 시간 현황' 페이지에서 <strong>'검색'</strong> 버튼 클릭</li>
-                <li>버튼 클릭 시 <strong>"list?"</strong> 로 시작하는 API 요청 찾아서 클릭</li>
-                <li><strong>Payload</strong> 탭에서 <strong>empId</strong> 값 복사</li>
-            </ol>
-            <p class="tip">
-                💡 <strong>참고</strong> empId는 한 번만 입력하면 자동으로 저장됩니다!
-            </p>
-        </div>
-
-        <div class="feature">
-            <h3>🚀 사용 방법</h3>
-            <ol>
-                <li>위의 버튼을 북마크바로 드래그</li>
-                <li><strong>어느 웹페이지에서든</strong> 북마크 클릭 (1차 클릭)</li>
-                <li>'근로 시간 현황' 페이지가 아니면 <strong>자동으로 바로 이동</strong></li>
-                <li>페이지 로드 완료 후 북마크를 <strong>한 번 더 클릭</strong> (2차 클릭)</li>
-                <li>근무 시간 계산 결과 확인!</li>
-            </ol>
-            <p class="tip">
-                💡 <strong>팁:</strong> Workplace 페이지에서 바로 실행하면 한 번만 클릭하면 됩니다!
-            </p>
-            <p class="warn">
-                ⚠️ <strong>주의:</strong> 빈 탭(새 탭)에서는 브라우저 보안 정책상 작동하지 않습니다.<br>
-                👉 아무 웹사이트(예: 구글, 네이버 등)를 먼저 열고 북마크를 클릭하세요.
-            </p>
-        </div>
-
-        <div class="feature">
-            <h3>📊 계산되는 정보</h3>
-            <ul>
-                <li><strong>총 근무일</strong>: 이번 달 전체 근무일 (dayTpCd == 'WORK')</li>
-                <li><strong>오늘까지 근무한 시간</strong>: 실제로 일한 시간</li>
-                <li><strong>앞으로 근무해야 하는 시간</strong>: 총 근무일 × 8h - 근무 시간</li>
-                <li><strong>현재 초과/부족</strong>: 오늘 기준 초과/부족 시간</li>
-                <li><strong>오늘 포함 여부</strong>: 오늘 근무시간 자동 감지</li>
-            </ul>
-        </div>
-
-        <div class="feature">
-            <h3>empId 재설정</h3>
-            <p>결과 화면에서 <strong>"empId 재설정"</strong> 버튼을 클릭하면 새로운 empId를 입력할 수 있습니다.</p>
-            <p style="color: var(--muted); font-size: 0.9rem;">💡 저장된 empId를 변경하고 싶을 때 사용하세요!</p>
-        </div>
-    </div>
-
-    <script>
-        // 북마크릿 코드 (읽기 쉽게 작성 후 인코딩)
-        const bookmarkletSource = `
 (function() {
     const targetUrl = 'https://workplace.worksmobile.com/my-space/work-statistics';
     const isWorkplacePage = window.location.href.includes('workplace.worksmobile.com/my-space/work-statistics');
@@ -265,7 +36,7 @@
     let empId = localStorage.getItem('work_clock_empId');
 
     if (!empId) {
-        empId = prompt('📝 empId를 입력하세요\\n\\n🔍 empId 찾는 방법:\\n1. F12 개발자 도구 열기\\n2. Network 탭 선택\\n3. 검색 버튼 클릭\\n4. list? API의 Payload 탭에서 empId 복사\\n\\n💡 한 번만 입력하면 자동 저장됩니다!');
+        empId = prompt('📝 empId를 입력하세요\n\n🔍 empId 찾는 방법:\n1. F12 개발자 도구 열기\n2. Network 탭 선택\n3. 검색 버튼 클릭\n4. list? API의 Payload 탭에서 empId 복사\n\n💡 한 번만 입력하면 자동 저장됩니다!');
         if (!empId) {
             alert('❌ empId가 필요합니다.');
             return;
@@ -501,34 +272,34 @@
                 : '<span style="color:#d94b0c;font-weight:600;">' + diffHours + '시간 ' + diffMins + '분 부족 ⚠️</span>';
 
             // 결과 UI (empId 재설정 버튼 추가)
-            loadingDiv.innerHTML = \`
+            loadingDiv.innerHTML = `
                 <div class="work-clock-modal">
                     <h2 class="work-clock-title">
                         <span class="icon">🕒</span>
-                        \${year}년 \${month}월 근무 현황
+                        ${year}년 ${month}월 근무 현황
                     </h2>
                     <div class="work-clock-stack">
                         <div class="work-clock-card">
                             <div class="work-clock-label">📅 총 근무일</div>
-                            <div><strong>\${totalWorkDays}일</strong> (지난 \${pastWorkDays}일 + 남은 \${remainingWorkDays}일)</div>
+                            <div><strong>${totalWorkDays}일</strong> (지난 ${pastWorkDays}일 + 남은 ${remainingWorkDays}일)</div>
                         </div>
                         <div class="work-clock-card">
                             <div class="work-clock-label">✅ 오늘까지 근무한 시간</div>
-                            <div class="work-clock-value">\${workedHours}시간 \${workedMins}분</div>
+                            <div class="work-clock-value">${workedHours}시간 ${workedMins}분</div>
                         </div>
                         <div class="work-clock-card alt">
                             <div class="work-clock-label">📋 앞으로 근무해야 하는 시간</div>
-                            <div class="work-clock-value">\${shouldWorkMoreHours}시간 \${shouldWorkMoreMins}분</div>
+                            <div class="work-clock-value">${shouldWorkMoreHours}시간 ${shouldWorkMoreMins}분</div>
                             <div class="work-clock-note">
-                                총 \${totalWorkDays}일 × 8h - 근무 \${workedHours}h \${workedMins}m<br>
-                                💡 \${todayStatus}
+                                총 ${totalWorkDays}일 × 8h - 근무 ${workedHours}h ${workedMins}m<br>
+                                💡 ${todayStatus}
                             </div>
                         </div>
-                        <div class="work-clock-balance \${isOverTime ? 'over' : ''}">
+                        <div class="work-clock-balance ${isOverTime ? 'over' : ''}">
                             <div class="work-clock-label">⚖️ 현재 초과/부족</div>
-                            <div style="font-size:1.35em">\${differenceText}</div>
+                            <div style="font-size:1.35em">${differenceText}</div>
                             <div class="work-clock-note">
-                                근무 \${workedHours}h \${workedMins}m - 필요 \${Math.floor(shouldHaveWorked/60)}h \${shouldHaveWorked%60}m
+                                근무 ${workedHours}h ${workedMins}m - 필요 ${Math.floor(shouldHaveWorked/60)}h ${shouldHaveWorked%60}m
                             </div>
                         </div>
                     </div>
@@ -537,7 +308,7 @@
                         <button id="work-clock-close" class="work-clock-btn primary">닫기</button>
                     </div>
                 </div>
-            \`;
+            `;
 
             document.getElementById('work-clock-close').addEventListener('click', () => {
                 document.body.removeChild(loadingDiv);
@@ -546,35 +317,20 @@
             document.getElementById('work-clock-reset-empid').addEventListener('click', () => {
                 localStorage.removeItem('work_clock_empId');
                 document.body.removeChild(loadingDiv);
-                alert('✅ empId가 초기화되었습니다.\\n북마크를 다시 클릭하여 새로운 empId를 입력하세요.');
+                alert('✅ empId가 초기화되었습니다.\n북마크를 다시 클릭하여 새로운 empId를 입력하세요.');
             });
         })
         .catch(err => {
             console.error('Error:', err);
-            loadingDiv.innerHTML = \`
+            loadingDiv.innerHTML = `
                 <div style="color:#d94b0c">
                     <h3>❌ 오류 발생</h3>
-                    <p>\${err.message}</p>
+                    <p>${err.message}</p>
                     <p style="font-size:0.9em;color:#6e6159">개발자 콘솔(F12)을 확인하세요.</p>
                     <button onclick="this.parentElement.parentElement.remove()" style="margin-top:10px;padding:10px 20px;background:#d94b0c;color:white;border:none;border-radius:999px;cursor:pointer">
                         닫기
                     </button>
                 </div>
-            \`;
+            `;
         });
 })();
-        `;
-
-        // URL 인코딩하여 북마크릿 생성
-        const bookmarkletCode = 'javascript:' + encodeURIComponent(bookmarkletSource.trim());
-        const bookmarkletElement = document.getElementById('bookmarklet');
-        bookmarkletElement.href = bookmarkletCode;
-
-        // 클릭 시 직접 실행 (테스트용)
-        bookmarkletElement.addEventListener('click', function(e) {
-            e.preventDefault();
-            eval(bookmarkletSource);
-        });
-    </script>
-</body>
-</html>
