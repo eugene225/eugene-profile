@@ -280,11 +280,12 @@
                    '&toDate=' + toDate + '&empId=' + empId + '&chkWorkingDay=Y&_=' + Date.now();
 
     // 로딩 UI
-    const existingOverlay = document.getElementById('work-clock-overlay');
-    if (existingOverlay) {
-        existingOverlay.style.zIndex = '10000';
-        return;
+    function removeAllWorkClockOverlays() {
+        document.querySelectorAll('#work-clock-overlay, #work-clock-loading').forEach((el) => el.remove());
     }
+
+    // 기존 오버레이/모달 정리 후 새로 생성
+    removeAllWorkClockOverlays();
 
     const overlay = document.createElement('div');
     overlay.id = 'work-clock-overlay';
@@ -299,14 +300,14 @@
 
     const onOverlayKeydown = (e) => {
         if (e.key === 'Escape') {
-            overlay.remove();
+            removeAllWorkClockOverlays();
             document.removeEventListener('keydown', onOverlayKeydown);
         }
     };
 
     overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
-            overlay.remove();
+            removeAllWorkClockOverlays();
             document.removeEventListener('keydown', onOverlayKeydown);
         }
     });
@@ -566,13 +567,13 @@
             \`;
 
             document.getElementById('work-clock-close').addEventListener('click', () => {
-                overlay.remove();
+                removeAllWorkClockOverlays();
                 document.removeEventListener('keydown', onOverlayKeydown);
             });
 
             document.getElementById('work-clock-reset-empid').addEventListener('click', () => {
                 localStorage.removeItem('work_clock_empId');
-                overlay.remove();
+                removeAllWorkClockOverlays();
                 document.removeEventListener('keydown', onOverlayKeydown);
                 alert('✅ empId가 초기화되었습니다.\\n북마크를 다시 클릭하여 새로운 empId를 입력하세요.');
             });
@@ -584,7 +585,7 @@
                     <h3>❌ 오류 발생</h3>
                     <p>\${err.message}</p>
                     <p style="font-size:0.9em;color:#6e6159">개발자 콘솔(F12)을 확인하세요.</p>
-                    <button onclick="document.getElementById('work-clock-overlay')?.remove()" style="margin-top:10px;padding:10px 20px;background:#d94b0c;color:white;border:none;border-radius:999px;cursor:pointer">
+                    <button onclick="document.querySelectorAll('#work-clock-overlay, #work-clock-loading').forEach(el => el.remove())" style="margin-top:10px;padding:10px 20px;background:#d94b0c;color:white;border:none;border-radius:999px;cursor:pointer">
                         닫기
                     </button>
                 </div>
