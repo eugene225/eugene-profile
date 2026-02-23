@@ -3,7 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 EXT_DIR="$ROOT_DIR/extensions/work-clock"
-ZIP_PATH="$ROOT_DIR/downloads/work-clock-extension.zip"
+ZIP_DIR="$ROOT_DIR/downloads"
+ZIP_LATEST="$ZIP_DIR/work-clock-extension.zip"
 
 if [ ! -d "$EXT_DIR" ]; then
   echo "Missing extension directory: $EXT_DIR" >&2
@@ -28,12 +29,17 @@ if [ -z "$VERSION" ] || [ -z "$UPDATED" ]; then
   exit 1
 fi
 
-rm -f "$ZIP_PATH"
+ZIP_VERSIONED="$ZIP_DIR/work-clock-extension-v${VERSION}.zip"
+
+rm -f "$ZIP_VERSIONED" "$ZIP_LATEST"
 (
   cd "$EXT_DIR"
-  zip -r "$ZIP_PATH" .
+  zip -r "$ZIP_VERSIONED" .
 )
 
-echo "Built: $ZIP_PATH"
+cp "$ZIP_VERSIONED" "$ZIP_LATEST"
+
+echo "Built: $ZIP_VERSIONED"
+echo "Latest: $ZIP_LATEST"
 echo "Version: $VERSION"
 echo "Updated: $UPDATED"

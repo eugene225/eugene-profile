@@ -524,7 +524,7 @@
                     <h4>1) 확장 파일 다운로드</h4>
                     <p>아래 버튼을 눌러 압축 파일을 다운로드하세요.</p>
                     <p style="margin-top:12px;">
-                        <a class="download-btn" href="downloads/work-clock-extension.zip" download>⬇️ Work Clock Extension</a>
+                        <a id="ext-download" class="download-btn" href="downloads/work-clock-extension.zip" download>⬇️ Work Clock Extension</a>
                     </p>
                     <p id="ext-meta" style="margin-top:10px;color:var(--muted);font-size:0.9rem;">
                         버전: <strong id="ext-version">v-</strong> · 업데이트: <strong id="ext-updated">-</strong>
@@ -604,8 +604,10 @@
                 const data = await res.json();
                 const versionEl = document.getElementById('ext-version');
                 const updatedEl = document.getElementById('ext-updated');
+                const downloadEl = document.getElementById('ext-download');
                 if (versionEl && data.version) versionEl.textContent = `v${data.version}`;
                 if (updatedEl && data.x_last_updated) updatedEl.textContent = data.x_last_updated;
+                if (downloadEl && data.version) downloadEl.href = `downloads/work-clock-extension-v${data.version}.zip`;
             } catch (e) {
                 // ignore display failures
             }
