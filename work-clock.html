@@ -280,11 +280,37 @@
                    '&toDate=' + toDate + '&empId=' + empId + '&chkWorkingDay=Y&_=' + Date.now();
 
     // 로딩 UI
+    const existingOverlay = document.getElementById('work-clock-overlay');
+    if (existingOverlay) {
+        existingOverlay.style.zIndex = '10000';
+        return;
+    }
+
+    const overlay = document.createElement('div');
+    overlay.id = 'work-clock-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.2);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;';
+
     const loadingDiv = document.createElement('div');
     loadingDiv.id = 'work-clock-loading';
-    loadingDiv.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 18px 40px rgba(31,26,23,0.2);z-index:10000;font-family:"Space Grotesk","IBM Plex Sans KR","Apple SD Gothic Neo",sans-serif;min-width:360px;border:1px solid rgba(255,122,59,0.2)';
+    loadingDiv.style.cssText = 'background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 18px 40px rgba(31,26,23,0.2);font-family:"Space Grotesk","IBM Plex Sans KR","Apple SD Gothic Neo",sans-serif;min-width:360px;max-width:520px;width:100%;border:1px solid rgba(255,122,59,0.2);';
     loadingDiv.innerHTML = '<div style="text-align:center;color:#6e6159">⏳ 근무 기록을 불러오는 중...</div>';
-    document.body.appendChild(loadingDiv);
+    overlay.appendChild(loadingDiv);
+    document.body.appendChild(overlay);
+
+    const onOverlayKeydown = (e) => {
+        if (e.key === 'Escape') {
+            overlay.remove();
+            document.removeEventListener('keydown', onOverlayKeydown);
+        }
+    };
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+            document.removeEventListener('keydown', onOverlayKeydown);
+        }
+    });
+    document.addEventListener('keydown', onOverlayKeydown);
 
     // 결과 UI 스타일 (한 번만 삽입)
     if (!document.getElementById('work-clock-style')) {
@@ -540,12 +566,14 @@
             \`;
 
             document.getElementById('work-clock-close').addEventListener('click', () => {
-                document.body.removeChild(loadingDiv);
+                overlay.remove();
+                document.removeEventListener('keydown', onOverlayKeydown);
             });
 
             document.getElementById('work-clock-reset-empid').addEventListener('click', () => {
                 localStorage.removeItem('work_clock_empId');
-                document.body.removeChild(loadingDiv);
+                overlay.remove();
+                document.removeEventListener('keydown', onOverlayKeydown);
                 alert('✅ empId가 초기화되었습니다.\\n북마크를 다시 클릭하여 새로운 empId를 입력하세요.');
             });
         })
@@ -556,7 +584,7 @@
                     <h3>❌ 오류 발생</h3>
                     <p>\${err.message}</p>
                     <p style="font-size:0.9em;color:#6e6159">개발자 콘솔(F12)을 확인하세요.</p>
-                    <button onclick="this.parentElement.parentElement.remove()" style="margin-top:10px;padding:10px 20px;background:#d94b0c;color:white;border:none;border-radius:999px;cursor:pointer">
+                    <button onclick="document.getElementById('work-clock-overlay')?.remove()" style="margin-top:10px;padding:10px 20px;background:#d94b0c;color:white;border:none;border-radius:999px;cursor:pointer">
                         닫기
                     </button>
                 </div>
