@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Work Clock",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "x_last_updated": "2026-02-23",
   "description": "근무시간 계산기 북마크릿을 확장 아이콘으로 실행합니다.",
   "action": {
