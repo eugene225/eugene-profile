@@ -54,7 +54,7 @@
     const loadingDiv = document.createElement('div');
     loadingDiv.id = 'work-clock-loading';
     loadingDiv.style.cssText = 'background:#ffffff;padding:28px;border-radius:18px;box-shadow:0 18px 40px rgba(31,26,23,0.2);font-family:"Space Grotesk","IBM Plex Sans KR","Apple SD Gothic Neo",sans-serif;min-width:360px;max-width:520px;width:100%;border:1px solid rgba(255,140,0,0.2);';
-    loadingDiv.innerHTML = '<div style="text-align:center;color:#6e6159">⏳ 근무 기록을 불러오는 중...</div>';
+    loadingDiv.innerHTML = '<div style="text-align:center;color:#4a3f38">⏳ 근무 기록을 불러오는 중...</div>';
     overlay.appendChild(loadingDiv);
     document.body.appendChild(overlay);
 
@@ -112,7 +112,7 @@
             .work-clock-stack {
                 display: grid;
                 gap: 8px;
-                color: #3b322d;
+                color: #2a201a;
                 line-height: 1.7;
             }
             .work-clock-card {
@@ -127,17 +127,17 @@
             }
             .work-clock-label {
                 font-size: 0.85em;
-                color: #6e6159;
+                color: #4a3f38;
                 margin-bottom: 4px;
             }
             .work-clock-value {
                 font-size: 1.2em;
                 font-weight: 600;
-                color: #FF8C00;
+                color: #C06400;
             }
             .work-clock-note {
                 font-size: 0.82em;
-                color: #6e6159;
+                color: #4a3f38;
                 margin-top: 4px;
             }
             .work-clock-actions {
@@ -160,7 +160,7 @@
             }
             .work-clock-btn.primary {
                 flex: 2;
-                background: linear-gradient(135deg,#FFB347 0%,#FF8C00 100%);
+                background: #FF8C00;
                 color: white;
             }
         `;
@@ -249,15 +249,9 @@
 
             const shouldHaveWorked = pastWorkDays * 8 * 60;
             const totalRequiredMinutes = totalWorkDays * 8 * 60;
-            const shouldWorkMore = totalRequiredMinutes - totalMonthMinutes;
+            const shouldWorkMore = Math.max(0, totalRequiredMinutes - workedMinutes);
             const differenceMinutes = workedMinutes - shouldHaveWorked;
             const remainingWorkDays = totalWorkDays - pastWorkDays;
-
-            const dailyNeededMins = remainingWorkDays > 0 && shouldWorkMore > 0
-                ? Math.ceil(shouldWorkMore / remainingWorkDays)
-                : 0;
-            const dailyNeededHours = Math.floor(dailyNeededMins / 60);
-            const dailyNeededMinsRem = dailyNeededMins % 60;
 
             const futureLeaveMinutes = totalMonthMinutes - workedMinutes;
             const totalMonthHours = Math.floor(totalMonthMinutes / 60);
@@ -325,13 +319,8 @@
                         `}
 
                         <div class="work-clock-card alt">
-                            ${shouldWorkMore <= 0 ? `
-                            <div class="work-clock-label">📋 앞으로 근무해야 하는 시간</div>
-                            <div class="work-clock-value" style="color:#0f7b4f">이번달 근무 시간을 모두 채웠어요! 🎉</div>
-                            ` : `
                             <div class="work-clock-label">📋 앞으로 근무해야 하는 시간</div>
                             <div class="work-clock-value">${shouldWorkMoreHours}시간 ${shouldWorkMoreMins}분</div>
-                            `}
                         </div>
                     </div>
 
@@ -360,7 +349,7 @@
                 <div style="color:#FF8C00">
                     <h3>❌ 오류 발생</h3>
                     <p>${err.message}</p>
-                    <p style="font-size:0.9em;color:#6e6159">개발자 콘솔(F12)을 확인하세요.</p>
+                    <p style="font-size:0.9em;color:#4a3f38">개발자 콘솔(F12)을 확인하세요.</p>
                     <button onclick="document.querySelectorAll('#work-clock-overlay, #work-clock-loading').forEach(el => el.remove())" style="margin-top:10px;padding:10px 20px;background:#FF8C00;color:white;border:none;border-radius:999px;cursor:pointer">
                         닫기
                     </button>
