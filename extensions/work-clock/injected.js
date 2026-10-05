@@ -1,4 +1,13 @@
 (async function() {
+    // workclock-utils.js 가 globalThis.__WC 에 노출한 상수·순수 유틸을 가져온다.
+    // (executeScript의 각 파일은 격리 스코프라 전역을 통해서만 값 공유 가능)
+    const WC = (typeof globalThis !== 'undefined' ? globalThis : window).__WC;
+    if (!WC) { alert('❌ 확장 로딩 오류: 유틸 스크립트가 주입되지 않았습니다. 확장을 새로고침 해주세요.'); return; }
+    const {
+        STANDARD_WORK_MINUTES, MAX_WORK_MINUTES, BREAK_THRESHOLD_MINUTES, BREAK_MINUTES,
+        FULL_LEAVE_MIN_MINUTES, effectiveWorkMinutes, fmtMinutesShort, fmtVal, getNowStr
+    } = WC;
+
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -7,20 +16,98 @@
     const toDate = year + month + String(new Date(year, now.getMonth() + 1, 0).getDate()).padStart(2, '0');
 
     const stored = await chrome.storage.local.get(['work_clock_empId', 'work_clock_startTime']);
+
+    // 로그인한 본인의 empId/companyId를 JWT 액세스 토큰에서 가져온다.
+    // (쿠키 인증만으로 호출되며 empId 파라미터가 필요 없어, 어느 페이지에서든 동작)
+    // background 경유로 호출해야 Workplace가 아닌 다른 도메인 페이지에서도 CORS 없이 작동한다.
+    function fetchTextViaBackground(url) {
+        return new Promise(resolve => {
+            chrome.runtime.sendMessage({ type: 'FETCH_TEXT', url }, resolve);
+        });
+    }
+    async function fetchIdentityFromJwt() {
+        try {
+            const res = await fetchTextViaBackground('https://workplace.worksmobile.com/apigw/auth-jwt/access-token');
+            if (!res || !res.ok || !res.text) return null;
+            const jwt = (res.text.match(/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/) || [])[0];
+            if (!jwt) return null;
+            const payload = JSON.parse(atob(jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+            const id = payload.empId || payload.sub || null;
+            return id ? { empId: id, companyId: payload.companyId || null } : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    // 현재 페이지가 이미 보낸 API 요청 URL에서 empId를 추출한다 (JWT 실패 시 fallback).
+    function extractEmpIdFromPage() {
+        try {
+            const found = performance.getEntriesByType('resource')
+                .map(e => e.name)
+                .filter(u => /empId=/.test(u))
+                .map(u => {
+                    const m = decodeURIComponent(u).match(/empId=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/);
+                    return m && m[1];
+                })
+                .filter(Boolean);
+            return found[0] || null;
+        } catch (e) {
+            return null;
+        }
+    }
+
     let empId = stored.work_clock_empId;
+    let companyId = '5662ae5e-e3a9-4a8b-866c-1fdc44b5f204'; // JWT 실패 시 사용할 기본값
+
+    // 로그인 안내 오버레이 (empId 획득 전에도 쓸 수 있도록 간단히 독립 구현)
+    function showLoginRequiredOverlay() {
+        document.querySelectorAll('#wc-overlay, #wc-login-overlay').forEach(el => el.remove());
+        const ov = document.createElement('div');
+        ov.id = 'wc-login-overlay';
+        ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;font-family:"Pretendard","Apple SD Gothic Neo","Space Grotesk",sans-serif;';
+        ov.innerHTML = `
+            <div style="background:#fff;border-radius:20px;box-shadow:0 20px 48px rgba(0,0,0,0.18);max-width:400px;width:100%;padding:32px;text-align:center;">
+                <div style="font-size:2em;margin-bottom:12px;">🔒</div>
+                <div style="font-weight:700;color:#1f1a17;margin-bottom:6px;font-size:1.05rem;">로그인이 필요해요</div>
+                <div style="font-size:0.88em;color:#888;margin-bottom:20px;line-height:1.5;">
+                    Workplace에 로그인한 뒤 다시 실행해주세요.
+                </div>
+                <div style="display:flex;gap:8px;justify-content:center;">
+                    <a href="https://workplace.worksmobile.com/" target="_blank" rel="noopener noreferrer"
+                       style="padding:10px 20px;background:#FF8C00;color:#fff;text-decoration:none;border-radius:999px;font-weight:600;font-size:0.9em;">Workplace 열기</a>
+                    <button id="wc-login-close"
+                       style="padding:10px 20px;background:#1f1a17;color:#fff;border:none;border-radius:999px;cursor:pointer;font-weight:600;font-size:0.9em;">닫기</button>
+                </div>
+            </div>`;
+        ov.addEventListener('click', (e) => { if (e.target === ov) ov.remove(); });
+        document.body.appendChild(ov);
+        document.getElementById('wc-login-close').addEventListener('click', () => ov.remove());
+    }
+
+    // empId 획득 순서: ① JWT 토큰 → ② 페이지 네트워크 기록 → ③ 저장값 → ④ 수동 입력
+    // JWT 성공 여부는 "현재 로그인 상태" 판별 신호로도 쓴다.
+    const identity = await fetchIdentityFromJwt();
+    if (identity) {
+        empId = identity.empId;
+        if (identity.companyId) companyId = identity.companyId;
+    }
+    if (!empId) empId = extractEmpIdFromPage();
+    if (!empId) empId = stored.work_clock_empId;
     if (!empId) {
-        empId = prompt('📝 empId를 입력하세요\n\n🔍 찾는 방법: F12 → Network → 검색 클릭 → list? API Payload에서 empId 복사\n\n💡 한 번만 입력하면 저장됩니다!');
+        // JWT도 실패하고 다른 수단으로도 empId를 못 구함.
+        // JWT 실패는 보통 미로그인 신호이므로, empId 입력을 요구하기 전에 로그인 안내를 먼저 띄운다.
+        if (!identity) { showLoginRequiredOverlay(); return; }
+        // 로그인은 됐는데(JWT 성공) empId만 못 얻은 드문 경우에만 수동 입력
+        empId = prompt('📝 empId를 입력하세요\n\n💡 보통은 자동으로 찾아지지만, 안 될 경우 직접 입력하세요.\n🔍 찾는 방법: F12 → Network → 검색 클릭 → list? API Payload에서 empId 복사');
         if (!empId) { alert('❌ empId가 필요합니다.'); return; }
     }
     await chrome.storage.local.set({ work_clock_empId: empId });
     let savedStartTime = stored.work_clock_startTime || '09:00';
 
-    const companyId = '5662ae5e-e3a9-4a8b-866c-1fdc44b5f204';
-
     const apiUrl = 'https://workplace.worksmobile.com/my-space/work-statistics/list?fromDate=' + fromDate +
                    '&toDate=' + toDate + '&empId=' + empId + '&chkWorkingDay=Y&_=' + Date.now();
     const commuteApiUrl = 'https://workplace.worksmobile.com/my-space/commute-status/list?companyId=' + companyId +
-                          '&fromDate=' + todayStr + '&toDate=' + todayStr + '&empId=' + empId + '&_=' + Date.now();
+                          '&fromDate=' + fromDate + '&toDate=' + toDate + '&empId=' + empId + '&_=' + Date.now();
 
     function fetchData(url) {
         return new Promise(resolve => {
@@ -29,7 +116,7 @@
     }
 
     function removeOverlay() {
-        document.querySelectorAll('#wc-overlay, #wc-style').forEach(el => el.remove());
+        document.querySelectorAll('#wc-overlay, #wc-login-overlay, #wc-style').forEach(el => el.remove());
     }
     removeOverlay();
 
@@ -90,24 +177,36 @@
 
     const [response, commuteResponse] = await Promise.all([fetchData(apiUrl), fetchData(commuteApiUrl)]);
     try {
+        // 로그인 세션이 없으면 background가 NOT_LOGGED_IN 을 돌려준다.
+        if (response && !response.ok && response.error === 'NOT_LOGGED_IN') throw new Error('NOT_LOGGED_IN');
         if (!response || !response.ok) throw new Error(response ? response.error : '응답 없음');
         const data = response.data;
 
-        // 오늘 출퇴근 시간 (commute-status API)
+        // commute-status: 날짜별 출퇴근/부재 정보 map (checkYmd -> { absenceMins, realInHm, realOutHm })
+        // absenceTime = 그날 연차·재택 등으로 "실근무 체크 없이 부재 처리된 시간"(HHMM)
+        const commuteByDate = {};
         let todayRealIn = null, todayRealOut = null;
         if (commuteResponse && commuteResponse.ok) {
             const cl = commuteResponse.data && commuteResponse.data.data && commuteResponse.data.data.list;
-            if (cl) {
-                const todayRec = cl.find(r => r.checkYmd === todayStr);
+            if (Array.isArray(cl)) {
+                cl.forEach(r => {
+                    if (!r.checkYmd) return;
+                    const absStr = r.absenceTime || '0000';
+                    const absenceMins = (+absStr.slice(0,2) * 60) + (+absStr.slice(2,4) || 0);
+                    commuteByDate[r.checkYmd] = {
+                        absenceMins: isNaN(absenceMins) ? 0 : absenceMins,
+                        realInHm: r.realInHm || null,
+                        realOutHm: r.realOutHm || null
+                    };
+                });
+                const todayRec = commuteByDate[todayStr];
                 if (todayRec && todayRec.realInHm) {
-                    const h = todayRec.realInHm.slice(0,2), m = todayRec.realInHm.slice(2,4);
-                    todayRealIn = h + ':' + m;
+                    todayRealIn = todayRec.realInHm.slice(0,2) + ':' + todayRec.realInHm.slice(2,4);
                     savedStartTime = todayRealIn;
                     chrome.storage.local.set({ work_clock_startTime: todayRealIn });
                 }
                 if (todayRec && todayRec.realOutHm) {
-                    const h = todayRec.realOutHm.slice(0,2), m = todayRec.realOutHm.slice(2,4);
-                    todayRealOut = h + ':' + m;
+                    todayRealOut = todayRec.realOutHm.slice(0,2) + ':' + todayRec.realOutHm.slice(2,4);
                 }
             }
         }
@@ -115,11 +214,12 @@
 
             const records = data.data.list;
             const today = new Date(); today.setHours(0,0,0,0);
-            const LEAVE_EXACT = new Set([2*60, 4*60, 6*60, 8*60]);
 
             let workedMinutes = 0, totalWorkDays = 0, pastWorkDays = 0;
             let futureLeave6h = 0, futureLeave8h = 0, futureNonLeave = 0;
             let workedToday = false, todayInProgress = false;
+            // 오늘이 근무일(WORK 레코드 존재)인지, 오늘 기록이 연차·재택(종일 부재)인지
+            let todayIsWorkday = false, todayIsFullLeave = false;
             const leaveDays = [];
 
             records.forEach(r => {
@@ -130,46 +230,55 @@
                 const hasMins = wt && wt !== '0000';
                 let mins = 0;
                 if (hasMins) { const h=+wt.slice(0,2), m=+wt.slice(2,4); if (!isNaN(h+m)) mins = h*60+m; }
-                const isLeave = hasMins && (r.restTime||'0000')==='0000' && LEAVE_EXACT.has(mins);
-                const isFullLeave = isLeave && mins >= 6*60;
+                // 종일 연차·재택 판별 (commute-status의 absenceTime 사용):
+                // absenceTime = 그날 출퇴근 체크 없이 "부재 처리된" 시간.
+                // 6시간 이상 부재면 종일 연차·재택으로 간주한다. (6h 연차는 보통 나머지 2h를
+                // 다른 날 채우는 운영이라 그날 자체는 종일 부재로 처리)
+                // 2h·4h 등 부분 연차(반차·반반차)는 그날 일부를 실제 근무하므로 부재로 보지 않는다.
+                const absenceMins = (commuteByDate[r.checkYmd] && commuteByDate[r.checkYmd].absenceMins) || 0;
+                const isFullLeave = absenceMins >= FULL_LEAVE_MIN_MINUTES;
                 totalWorkDays++;
                 if (d < today) {
-                    pastWorkDays++; workedMinutes += Math.min(mins, 10 * 60);
+                    pastWorkDays++; workedMinutes += Math.min(mins, MAX_WORK_MINUTES);
                     if (isFullLeave) {
                         leaveDays.push({ date: d, mins, future: false });
                     }
                 } else if (isToday) {
-                    if (hasMins) { pastWorkDays++; workedToday = true; workedMinutes += Math.min(mins, 10 * 60); }
+                    todayIsWorkday = true;
+                    if (isFullLeave) todayIsFullLeave = true;
+                    if (hasMins) { pastWorkDays++; workedToday = true; workedMinutes += Math.min(mins, MAX_WORK_MINUTES); }
                     else todayInProgress = true;
                 } else {
                     if (isFullLeave) {
-                        mins >= 8*60 ? futureLeave8h++ : futureLeave6h++;
+                        mins >= STANDARD_WORK_MINUTES ? futureLeave8h++ : futureLeave6h++;
                         leaveDays.push({ date: d, mins, future: true });
                     } else futureNonLeave++;
                 }
             });
 
 
-            const totalTarget = totalWorkDays * 8 * 60;
+            const totalTarget = totalWorkDays * STANDARD_WORK_MINUTES;
 
             function computeStats(extraMins) {
                 const wToday = workedToday || extraMins > 0;
                 const tInProg = todayInProgress && extraMins === 0;
                 const wM = workedMinutes + extraMins;
                 const pD = pastWorkDays + (extraMins > 0 && !workedToday ? 1 : 0);
-                const todayDiff = wM - pD * 8 * 60;
-                const projected = wM + futureLeave6h*6*60 + futureLeave8h*8*60 + futureNonLeave*8*60 + (tInProg ? 8*60 : 0);
+                const todayDiff = wM - pD * STANDARD_WORK_MINUTES;
+                const projected = wM + futureLeave6h*FULL_LEAVE_MIN_MINUTES + futureLeave8h*STANDARD_WORK_MINUTES + futureNonLeave*STANDARD_WORK_MINUTES + (tInProg ? STANDARD_WORK_MINUTES : 0);
                 const monthDiff = projected - totalTarget;
                 const remainReal = futureNonLeave + (tInProg ? 1 : 0);
-                const covered = wM + futureLeave6h*6*60 + futureLeave8h*8*60;
+                const covered = wM + futureLeave6h*FULL_LEAVE_MIN_MINUTES + futureLeave8h*STANDARD_WORK_MINUTES;
                 const stillNeed = Math.max(0, totalTarget - covered);
                 const avgMins = remainReal > 0 ? Math.round(stillNeed / remainReal) : 0;
                 const savedStart = savedStartTime;
                 const [sh, sm] = savedStart.split(':').map(Number);
-                const balanceMins = sh*60 + sm + 8*60 - todayDiff;
+                const netNeeded = STANDARD_WORK_MINUTES - todayDiff;
+                const balanceMins = sh*60 + sm + netNeeded + (netNeeded > BREAK_THRESHOLD_MINUTES ? BREAK_MINUTES : 0);
                 const bH = Math.floor(balanceMins/60)%24, bM = balanceMins%60;
                 return {
                     wToday, tInProg, wM, pD, todayDiff, monthDiff, remainReal,
+                    projectedMinutes: projected, totalTargetMinutes: totalTarget,
                     avgH: Math.floor(avgMins/60), avgM: avgMins%60,
                     balanceStr: String(bH).padStart(2,'0')+':'+String(bM).padStart(2,'0'),
                     savedStart,
@@ -177,32 +286,15 @@
                 };
             }
 
-            function fmtVal(diff) {
-                const ah = Math.floor(Math.abs(diff)/60), am = Math.abs(diff)%60;
-                return diff >= 0
-                    ? `<span class="wc-hero-val over">+${ah}h ${am}m 초과 ✓</span>`
-                    : `<span class="wc-hero-val">-${ah}h ${am}m 부족</span>`;
-            }
-
-            function getNowStr() {
-                const t = new Date();
-                return t.getHours().toString().padStart(2,'0')+':'+t.getMinutes().toString().padStart(2,'0');
-            }
-
-            function getBreakMins(rawMins) {
-                if (rawMins >= 6 * 60) return 60;
-                return 0;
-            }
-
-
+            // 지정한 출근~퇴근 시간으로 "지금 퇴근하면" 오늘까지 초과/부족을 미리 보여주는 HTML
             function calcPreview(startVal, endVal) {
                 const [sh,sm]=startVal.split(':').map(Number), [eh,em]=endVal.split(':').map(Number);
                 const rawMins=(eh*60+em)-(sh*60+sm);
-                const breakMins=getBreakMins(rawMins);
-                const m=Math.min(rawMins-breakMins, 10*60);
+                const breakMins=rawMins>BREAK_THRESHOLD_MINUTES?BREAK_MINUTES:0;
+                const m=effectiveWorkMinutes(rawMins);
                 if(m<=0) return null;
                 const newW=workedMinutes+m, newP=pastWorkDays+(workedToday?0:1);
-                const diff=newW-newP*8*60, ah=Math.floor(Math.abs(diff)/60), am2=Math.abs(diff)%60;
+                const diff=newW-newP*STANDARD_WORK_MINUTES, ah=Math.floor(Math.abs(diff)/60), am2=Math.abs(diff)%60;
                 const breakLabel=breakMins>0?`<span style="color:#bbb;font-size:0.88em;"> (휴게 ${breakMins}분 제외)</span>`:'';
                 return diff>=0
                     ? `<span style="color:#0a7a4a;font-weight:700;">+${ah}h ${am2}m 초과 ✨</span>${breakLabel}`
@@ -221,6 +313,23 @@
             const isWeekend = now.getDay() === 0 || now.getDay() === 6;
             const isDone = !!todayRealOut;
 
+            // "오늘 퇴근 계산"을 비활성화해야 하는 경우와 사유
+            // - 주말 / 공휴일(=근무일 레코드 없음) : 애초에 근무일이 아님
+            // - 오늘 연차·재택(종일 부재) : 이미 종일 처리되어 퇴근 계산 불필요
+            // - 퇴근 완료 : 이미 퇴근함
+            let todayCalcDisabled = true, todayCalcReason = '';
+            if (isWeekend) {
+                todayCalcReason = '주말';
+            } else if (!todayIsWorkday) {
+                todayCalcReason = '휴일';
+            } else if (todayIsFullLeave) {
+                todayCalcReason = '연차·재택';
+            } else if (isDone) {
+                todayCalcReason = '퇴근 완료';
+            } else {
+                todayCalcDisabled = false;
+            }
+
             modal.innerHTML = `
                 <div class="wc-header">
                     <h2>🏃 퇴근시켜주세요</h2>
@@ -229,7 +338,7 @@
                 <div class="wc-body">
                     <div id="wc-month-hero" class="wc-hero ${initStats.monthDiff>=0?'over':''}">
                         <div class="wc-hero-label">이달 예상</div>
-                        <div id="wc-month-val">${fmtVal(initStats.monthDiff)}</div>
+                        <div id="wc-month-val">${fmtVal(initStats.monthDiff, { current: initStats.wM, target: initStats.totalTargetMinutes })}</div>
                         <div id="wc-today-note" class="wc-hero-note">${initStats.pD}일 근무 · 잔여 ${initStats.remainReal}일 · ${initStats.todayNote}</div>
                     </div>
 
@@ -253,13 +362,22 @@
                     </div>
                     ` : ''}
 
-                    <div class="wc-time-card" ${isWeekend || isDone ? 'style="opacity:0.4;pointer-events:none;"' : ''}>
-                        <div class="wc-card-label" style="margin-bottom:8px;">오늘 퇴근 계산${isDone ? ' · <span style="color:#0a7a4a;">퇴근 완료</span>' : ''}</div>
-                        <div id="wc-balance" class="wc-balance" style="${!isDone && (initStats.tInProg||initStats.wToday)?'':'display:none;'}">
+                    <div class="wc-time-card" ${todayCalcDisabled ? 'style="opacity:0.5;"' : ''}>
+                        <div class="wc-card-label" style="margin-bottom:8px;">오늘 퇴근 계산${todayCalcDisabled ? ` · <span style="color:#0a7a4a;">${todayCalcReason}</span>` : ''}</div>
+                        ${todayCalcDisabled ? `
+                        <div class="wc-balance" style="text-align:center;color:#9a8f88;">
+                            ${todayCalcReason === '퇴근 완료'
+                                ? `오늘은 이미 퇴근했어요 🎉${todayRealOut ? ` (${todayRealOut})` : ''}`
+                                : todayCalcReason === '연차·재택'
+                                    ? '오늘은 연차·재택으로 종일 처리되어 퇴근 계산이 필요 없어요 🌴'
+                                    : '오늘은 근무일이 아니에요'}
+                        </div>
+                        ` : `
+                        <div id="wc-balance" class="wc-balance" style="${(initStats.tInProg||initStats.wToday)?'':'display:none;'}">
                             딱 맞춰 퇴근 <strong style="color:#C06400;font-size:1.05em;" id="wc-balance-time">${initStats.balanceStr}</strong>
                             <span style="color:#bbb;font-size:0.9em;" id="wc-balance-start"> (출근 ${initStats.savedStart} 기준)</span>
                         </div>
-                        <div id="wc-preview" class="wc-balance" style="${isDone?'display:none;':''}">
+                        <div id="wc-preview" class="wc-balance">
                             지금(${nowStr}) 퇴근하면 → ${calcPreview(savedStart, nowStr)||'<span style="color:#ccc">계산 불가</span>'}
                         </div>
                         <div class="wc-time-row">
@@ -269,10 +387,11 @@
                             </div>
                             <div>
                                 <div class="wc-time-lbl">퇴근</div>
-                                <input type="time" id="wc-end" class="wc-input" value="${isDone ? (todayRealOut||nowStr) : nowStr}">
+                                <input type="time" id="wc-end" class="wc-input" value="${nowStr}">
                             </div>
                             <button id="wc-apply" class="wc-btn apply">반영</button>
                         </div>
+                        `}
                     </div>
                 </div>
                 <div class="wc-actions">
@@ -284,7 +403,7 @@
             // hero + avg DOM 업데이트 (풀 리렌더 없이)
             function updateHero(stats, startVal, endVal, isManual) {
                 document.getElementById('wc-month-hero').className = `wc-hero ${stats.monthDiff>=0?'over':''}`;
-                document.getElementById('wc-month-val').innerHTML = fmtVal(stats.monthDiff);
+                document.getElementById('wc-month-val').innerHTML = fmtVal(stats.monthDiff, { current: stats.wM, target: stats.totalTargetMinutes });
                 document.getElementById('wc-today-note').textContent = `${stats.pD}일 근무 · 잔여 ${stats.remainReal}일 · ${stats.todayNote}`;
 
                 const avgValEl = document.getElementById('wc-avg-val');
@@ -326,7 +445,7 @@
                 previewEl.innerHTML = `${label} → ${calcPreview(sv, ev)||'<span style="color:#ccc">계산 불가</span>'}`;
             }
 
-            if (!isDone) liveTimer = setInterval(() => updatePreview(true), 30000);
+            if (!todayCalcDisabled) liveTimer = setInterval(() => updatePreview(true), 30000);
 
             // 이벤트
             document.getElementById('wc-close').addEventListener('click', closeAll);
@@ -336,6 +455,9 @@
                 alert('✅ empId 초기화됨. 다시 클릭하면 새로 입력할 수 있습니다.');
             });
 
+            // 퇴근 계산 입력 요소는 비활성(주말·휴일·연차·퇴근완료) 상태에서는 렌더되지 않으므로
+            // 활성 상태에서만 이벤트를 바인딩한다.
+            if (!todayCalcDisabled) {
             document.getElementById('wc-start').addEventListener('change', e => {
                 savedStartTime = e.target.value;
                 chrome.storage.local.set({ work_clock_startTime: e.target.value });
@@ -355,12 +477,16 @@
                 const ev = document.getElementById('wc-end').value;
                 if (!ev) return;
                 const [sh,sm]=sv.split(':').map(Number), [eh,em]=ev.split(':').map(Number);
-                const m = (eh*60+em)-(sh*60+sm);
-                if (m <= 0) { alert('퇴근 시간이 출근 시간보다 늦어야 합니다.'); return; }
+                const rawMins = (eh*60+em)-(sh*60+sm);
+                if (rawMins <= 0) { alert('퇴근 시간이 출근 시간보다 늦어야 합니다.'); return; }
+                // 미리보기(calcPreview)와 동일하게 휴게시간 제외 + 10h 상한 적용
+                const m = effectiveWorkMinutes(rawMins);
+                if (m <= 0) { alert('근무 시간이 0분 이하입니다.'); return; }
                 window._wcOverrideMins = m;
                 userChangedEnd = true; // 반영 후 실시간 auto-update 중단
                 updateHero(computeStats(m), sv, ev, true);
             });
+            } // end if (!todayCalcDisabled)
 
             document.getElementById('wc-cancel-btn')?.addEventListener('click', () => {
                 window._wcOverrideMins = 0;
@@ -372,13 +498,21 @@
 
         } catch(err) {
             console.error('퇴근시켜주세요 Error:', err);
-            modal.innerHTML = `
-                <div style="padding:32px;text-align:center;">
-                    <div style="font-size:2em;margin-bottom:12px;">❌</div>
-                    <div style="font-weight:700;color:#1f1a17;margin-bottom:6px;">오류 발생</div>
-                    <div style="font-size:0.85em;color:#888;margin-bottom:20px;">${err.message}</div>
-                    <button onclick="document.getElementById('wc-overlay').remove()" style="padding:10px 24px;background:#1f1a17;color:#fff;border:none;border-radius:999px;cursor:pointer;font-weight:600;">닫기</button>
-                </div>
-            `;
+            if (err.message === 'NOT_LOGGED_IN') {
+                // 로그인 안내는 공용 오버레이 재사용 (CSP 안전: 인라인 핸들러 없음)
+                removeOverlay();
+                showLoginRequiredOverlay();
+            } else {
+                modal.innerHTML = `
+                    <div style="padding:32px;text-align:center;">
+                        <div style="font-size:2em;margin-bottom:12px;">❌</div>
+                        <div style="font-weight:700;color:#1f1a17;margin-bottom:6px;">오류 발생</div>
+                        <div style="font-size:0.85em;color:#888;margin-bottom:20px;word-break:break-all;">${err.message}</div>
+                        <button id="wc-err-close" style="padding:10px 24px;background:#1f1a17;color:#fff;border:none;border-radius:999px;cursor:pointer;font-weight:600;">닫기</button>
+                    </div>
+                `;
+                const errClose = document.getElementById('wc-err-close');
+                if (errClose) errClose.addEventListener('click', () => removeOverlay());
+            }
         }
 })();

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "퇴근시켜주세요",
-  "version": "2.0.8",
-  "x_last_updated": "2026-09-27",
+  "version": "2.2.0",
+  "x_last_updated": "2026-10-05",
   "description": "오늘 몇 시간 부족한지, 언제 퇴근하면 되는지 바로 알려드려요.",
   "action": {
     "default_title": "퇴근시켜주세요",
