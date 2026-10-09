@@ -14,6 +14,7 @@
     const BREAK_THRESHOLD_MINUTES = 5 * 60;  // 체류가 이 시간을 "초과"하면 휴게시간 차감 (회사 규정: 5h까지 인정, 초과 시 1h 휴게)
     const BREAK_MINUTES = 60;                // 차감되는 휴게시간
     const FULL_LEAVE_MIN_MINUTES = 6 * 60;   // 이 시간 이상 부재(absenceTime)면 종일 연차·재택으로 간주
+    const EARLIEST_LEAVE_MINUTES = 16 * 60;  // 회사 의무 근무: 이 시각(16:00) 이전엔 퇴근 불가 (딱 맞춰 퇴근 하한)
 
     // 하루 근무시간(분)에서 휴게시간을 빼고 상한을 적용한 "인정 근무시간"
     function effectiveWorkMinutes(rawMinutes) {
@@ -52,6 +53,7 @@
         BREAK_THRESHOLD_MINUTES,
         BREAK_MINUTES,
         FULL_LEAVE_MIN_MINUTES,
+        EARLIEST_LEAVE_MINUTES,
         effectiveWorkMinutes,
         fmtMinutesShort,
         fmtVal,

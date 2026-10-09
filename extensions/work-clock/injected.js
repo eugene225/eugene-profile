@@ -5,7 +5,7 @@
     if (!WC) { alert('❌ 확장 로딩 오류: 유틸 스크립트가 주입되지 않았습니다. 확장을 새로고침 해주세요.'); return; }
     const {
         STANDARD_WORK_MINUTES, MAX_WORK_MINUTES, BREAK_THRESHOLD_MINUTES, BREAK_MINUTES,
-        FULL_LEAVE_MIN_MINUTES, effectiveWorkMinutes, fmtMinutesShort, fmtVal, getNowStr
+        FULL_LEAVE_MIN_MINUTES, EARLIEST_LEAVE_MINUTES, effectiveWorkMinutes, fmtMinutesShort, fmtVal, getNowStr
     } = WC;
 
     const now = new Date();
@@ -218,6 +218,8 @@
             let workedMinutes = 0, totalWorkDays = 0, pastWorkDays = 0;
             let futureLeave6h = 0, futureLeave8h = 0, futureNonLeave = 0;
             let workedToday = false, todayInProgress = false;
+            let todayWorkedMins = 0; // 진행 중인 오늘 지금까지 찍힌 실근무(분). workedMinutes와 별도 관리.
+            let todayPartialLeaveMins = 0; // 오늘 반차·반반차(2h/4h) 부재 분. sumWorkTime에 이미 인정돼 있어 계산엔 쓰지 않고, 사용자 안내 표기용.
             // 오늘이 근무일(WORK 레코드 존재)인지, 오늘 기록이 연차·재택(종일 부재)인지
             let todayIsWorkday = false, todayIsFullLeave = false;
             const leaveDays = [];
@@ -246,8 +248,19 @@
                 } else if (isToday) {
                     todayIsWorkday = true;
                     if (isFullLeave) todayIsFullLeave = true;
-                    if (hasMins) { pastWorkDays++; workedToday = true; workedMinutes += Math.min(mins, MAX_WORK_MINUTES); }
-                    else todayInProgress = true;
+                    // 오늘 반차·반반차(종일부재 아닌 부재)는 근무로 인정되므로 퇴근 계산에 더한다.
+                    if (!isFullLeave && absenceMins > 0) todayPartialLeaveMins = absenceMins;
+                    // 오늘은 아직 퇴근(realOutHm) 전이면 sumWorkTime에 중간값이 찍혀 있어도 "진행 중"으로 본다.
+                    // (진행 중인 오늘을 과거 근무일처럼 8h 목표로 차감하면 '방금 출근했는데 N시간 부족'이 뜨는 버그 발생)
+                    const todayFinished = !!todayRealOut;
+                    if (hasMins && todayFinished) {
+                        pastWorkDays++; workedToday = true; workedMinutes += Math.min(mins, MAX_WORK_MINUTES);
+                    } else {
+                        // 진행 중: 지금까지 찍힌 시간은 todayWorkedMins에 따로 보관(workedMinutes 중복 방지).
+                        // 오늘을 "완료된 근무일"로 세지 않는다.
+                        todayInProgress = true;
+                        if (hasMins) todayWorkedMins = Math.min(mins, MAX_WORK_MINUTES);
+                    }
                 } else {
                     if (isFullLeave) {
                         mins >= STANDARD_WORK_MINUTES ? futureLeave8h++ : futureLeave6h++;
@@ -262,22 +275,47 @@
             function computeStats(extraMins) {
                 const wToday = workedToday || extraMins > 0;
                 const tInProg = todayInProgress && extraMins === 0;
-                const wM = workedMinutes + extraMins;
+                // 완료된 근무(과거 + 오늘 퇴근완료분)만 담은 기준값
+                const baseWorked = workedMinutes + extraMins;
+                // 진행 중인 오늘 지금까지 찍힌 실근무(반영 모드가 아닐 때만 더함)
+                const todayLive = (tInProg ? todayWorkedMins : 0);
+                // 표시용 "오늘까지 실근무" = 완료분 + 진행중 오늘분
+                const wM = baseWorked + todayLive;
                 const pD = pastWorkDays + (extraMins > 0 && !workedToday ? 1 : 0);
+                // 오늘까지 초과/부족: 완료된 근무일(pD) 목표 대비. 진행 중 오늘은 pD에 없으니 오늘분은 보너스로 반영됨.
                 const todayDiff = wM - pD * STANDARD_WORK_MINUTES;
-                const projected = wM + futureLeave6h*FULL_LEAVE_MIN_MINUTES + futureLeave8h*STANDARD_WORK_MINUTES + futureNonLeave*STANDARD_WORK_MINUTES + (tInProg ? STANDARD_WORK_MINUTES : 0);
+                // 이달 예상: 진행 중 오늘은 8h 채울 것으로 가정(todayLive 중복 방지 위해 baseWorked 기준).
+                const projected = baseWorked + futureLeave6h*FULL_LEAVE_MIN_MINUTES + futureLeave8h*STANDARD_WORK_MINUTES + futureNonLeave*STANDARD_WORK_MINUTES + (tInProg ? STANDARD_WORK_MINUTES : 0);
                 const monthDiff = projected - totalTarget;
-                const remainReal = futureNonLeave + (tInProg ? 1 : 0);
-                const covered = wM + futureLeave6h*FULL_LEAVE_MIN_MINUTES + futureLeave8h*STANDARD_WORK_MINUTES;
+                // 하루 평균 목표: 오늘을 분자·분모 양쪽에서 제외하고 "내일부터" 기준으로 계산.
+                //  - 분자(stillNeed): 월 목표 − 오늘 제외한 확정 근무(과거 완료 실근무 + 미래 연차 커버분)
+                //  - 분모(remainReal): 오늘 제외한 미래 실근무일
+                // → 오늘을 몇 시간으로 가정할지 신경 쓸 필요가 없다.
+                const remainReal = futureNonLeave;
+                const covered = workedMinutes + futureLeave6h*FULL_LEAVE_MIN_MINUTES + futureLeave8h*STANDARD_WORK_MINUTES;
                 const stillNeed = Math.max(0, totalTarget - covered);
                 const avgMins = remainReal > 0 ? Math.round(stillNeed / remainReal) : 0;
                 const savedStart = savedStartTime;
                 const [sh, sm] = savedStart.split(':').map(Number);
-                const netNeeded = STANDARD_WORK_MINUTES - todayDiff;
-                const balanceMins = sh*60 + sm + netNeeded + (netNeeded > BREAK_THRESHOLD_MINUTES ? BREAK_MINUTES : 0);
+                // 딱 맞춰 퇴근: 지금까지의 누적 부족/초과를 고려해 '오늘 몇 시에 나가면 균형이 맞는지'.
+                //  - pastDiff: 완료된 과거 근무일의 누적 초과(+)/부족(-). 반영 입력(extraMins)과 무관한 실제 데이터.
+                //  - 오늘 더 채워야 할 체류근무 = 오늘목표(8h) - 오늘이미인정분 - 과거누적초과
+                //    (과거가 부족하면 pastDiff<0 → 더 채워야 하고, 초과면 덜 채워도 됨)
+                const pastDiff = workedMinutes - pastWorkDays * STANDARD_WORK_MINUTES;
+                // 오늘 균형을 맞추기 위해 더 필요한 인정 근무(이상적 값)
+                const idealNeeded = STANDARD_WORK_MINUTES - todayWorkedMins - pastDiff;
+                // 오늘 체류로 더 쌓을 수 있는 인정 근무의 상한 = 하루 인정 상한(10h) - 오늘 이미 인정분
+                const maxTodayAddable = MAX_WORK_MINUTES - todayWorkedMins;
+                // 실제로는 상한을 넘겨 채울 수 없다. 10h 캡 적용.
+                const netNeeded = Math.min(idealNeeded, maxTodayAddable);
+                const balanceCapped = idealNeeded > maxTodayAddable; // 오늘 다 못 메꾸는 상태
+                let balanceMins = sh*60 + sm + netNeeded + (netNeeded > BREAK_THRESHOLD_MINUTES ? BREAK_MINUTES : 0);
+                // 회사 의무 근무: 아무리 초과여도 EARLIEST_LEAVE_MINUTES(16:00) 이전엔 퇴근 불가 → 하한 적용
+                const balanceEarliest = balanceMins < EARLIEST_LEAVE_MINUTES;
+                if (balanceEarliest) balanceMins = EARLIEST_LEAVE_MINUTES;
                 const bH = Math.floor(balanceMins/60)%24, bM = balanceMins%60;
                 return {
-                    wToday, tInProg, wM, pD, todayDiff, monthDiff, remainReal,
+                    wToday, tInProg, wM, pD, todayDiff, monthDiff, remainReal, balanceCapped, balanceEarliest,
                     projectedMinutes: projected, totalTargetMinutes: totalTarget,
                     avgH: Math.floor(avgMins/60), avgM: avgMins%60,
                     balanceStr: String(bH).padStart(2,'0')+':'+String(bM).padStart(2,'0'),
@@ -363,7 +401,7 @@
                     ` : ''}
 
                     <div class="wc-time-card" ${todayCalcDisabled ? 'style="opacity:0.5;"' : ''}>
-                        <div class="wc-card-label" style="margin-bottom:8px;">오늘 퇴근 계산${todayCalcDisabled ? ` · <span style="color:#0a7a4a;">${todayCalcReason}</span>` : ''}</div>
+                        <div class="wc-card-label" style="margin-bottom:8px;">오늘 퇴근 계산${todayCalcDisabled ? ` · <span style="color:#0a7a4a;">${todayCalcReason}</span>` : (todayPartialLeaveMins > 0 ? ` · <span style="color:#C06400;font-weight:600;">${todayPartialLeaveMins >= 240 ? '반차' : '반반차'} ${Math.floor(todayPartialLeaveMins/60)}h 적용</span>` : '')}</div>
                         ${todayCalcDisabled ? `
                         <div class="wc-balance" style="text-align:center;color:#9a8f88;">
                             ${todayCalcReason === '퇴근 완료'
@@ -374,8 +412,10 @@
                         </div>
                         ` : `
                         <div id="wc-balance" class="wc-balance" style="${(initStats.tInProg||initStats.wToday)?'':'display:none;'}">
-                            딱 맞춰 퇴근 <strong style="color:#C06400;font-size:1.05em;" id="wc-balance-time">${initStats.balanceStr}</strong>
+                            <span id="wc-balance-label">${initStats.balanceCapped ? '최대로 채워도 퇴근' : (initStats.balanceEarliest ? '최소 근무 퇴근' : '딱 맞춰 퇴근')}</span>
+                            <strong style="color:#C06400;font-size:1.05em;" id="wc-balance-time">${initStats.balanceStr}</strong>
                             <span style="color:#bbb;font-size:0.9em;" id="wc-balance-start"> (출근 ${initStats.savedStart} 기준)</span>
+                            <span id="wc-balance-cap" style="color:#E07800;font-size:0.85em;display:${(initStats.balanceCapped || initStats.balanceEarliest) ? 'block' : 'none'};margin-top:3px;">${initStats.balanceCapped ? '⚠️ 하루 인정 10시간 상한이라 오늘은 부족분을 다 못 채워요' : '🕓 이미 충분히 채웠지만 의무 근무상 16:00 이후 퇴근 가능해요'}</span>
                         </div>
                         <div id="wc-preview" class="wc-balance">
                             지금(${nowStr}) 퇴근하면 → ${calcPreview(savedStart, nowStr)||'<span style="color:#ccc">계산 불가</span>'}
@@ -416,6 +456,15 @@
                     balEl.style.display = (stats.tInProg || stats.wToday) ? '' : 'none';
                     document.getElementById('wc-balance-time').textContent = stats.balanceStr;
                     document.getElementById('wc-balance-start').textContent = ` (출근 ${stats.savedStart} 기준)`;
+                    const labelEl = document.getElementById('wc-balance-label');
+                    if (labelEl) labelEl.textContent = stats.balanceCapped ? '최대로 채워도 퇴근' : (stats.balanceEarliest ? '최소 근무 퇴근' : '딱 맞춰 퇴근');
+                    const capEl = document.getElementById('wc-balance-cap');
+                    if (capEl) {
+                        capEl.style.display = (stats.balanceCapped || stats.balanceEarliest) ? 'block' : 'none';
+                        capEl.textContent = stats.balanceCapped
+                            ? '⚠️ 하루 인정 10시간 상한이라 오늘은 부족분을 다 못 채워요'
+                            : '🕓 이미 충분히 채웠지만 의무 근무상 16:00 이후 퇴근 가능해요';
+                    }
                 }
 
                 const modeBar = document.getElementById('wc-mode-bar');
@@ -482,9 +531,11 @@
                 // 미리보기(calcPreview)와 동일하게 휴게시간 제외 + 10h 상한 적용
                 const m = effectiveWorkMinutes(rawMins);
                 if (m <= 0) { alert('근무 시간이 0분 이하입니다.'); return; }
-                window._wcOverrideMins = m;
+                // 오늘 이미 인정된 시간(반반차·반차 등 sumWorkTime 반영분)을 체류 근무에 더해 반영한다.
+                const m2 = m + todayWorkedMins;
+                window._wcOverrideMins = m2;
                 userChangedEnd = true; // 반영 후 실시간 auto-update 중단
-                updateHero(computeStats(m), sv, ev, true);
+                updateHero(computeStats(m2), sv, ev, true);
             });
             } // end if (!todayCalcDisabled)
 
